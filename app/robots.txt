@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://pomocnikprezentowy.pl/sitemap.xml

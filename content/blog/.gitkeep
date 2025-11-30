@@ -1,0 +1,8 @@
+# Katalog na wygenerowane artykuły blogowe
+
+Ten katalog przechowuje artykuły Markdown wygenerowane przez AI za pomocą funkcji Generator Bloga.
+
+Pliki są nazywane według schematu: `YYYY-MM-DD-slug.md`
+
+Przykład:
+- 2025-11-27-najlepsze-prezenty-na-dzien-matki.md
