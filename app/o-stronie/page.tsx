@@ -88,8 +88,8 @@ export default function StronaOStronie() {
             </ul>
             <p>
               <strong>Linki afiliacyjne:</strong> Linki do sklepów mogą być linkami afiliacyjnymi. 
-              W wersji MVP linki prowadzą do wyszukiwania produktu w sklepie - nie zawsze będzie to 
-              dokładnie ten sam produkt/oferta. W pełnej wersji będą to bezpośrednie linki do konkretnych ofert.
+              Linki prowadzą do wyszukiwania produktu w sklepie - nie zawsze będzie to 
+              dokładnie ten sam produkt/oferta.
             </p>
             <p>
               <strong>Prywatność:</strong> Nie zbieramy danych osobowych. Ulubione prezenty są 
@@ -134,9 +134,9 @@ export default function StronaOStronie() {
             <div className="flex items-start space-x-3">
               <span className="text-2xl">📝</span>
               <div>
-                <h4 className="font-semibold">Generator bloga SEO</h4>
+                <h4 className="font-semibold">Blog prezentowy</h4>
                 <p className="text-sm text-gray-600">
-                  Twórz artykuły blogowe przez AI
+                  Porady i inspiracje na prezenty
                 </p>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function StronaOStronie() {
               <div>
                 <h4 className="font-semibold">Porównanie cen</h4>
                 <p className="text-sm text-gray-600">
-                  Zobacz ceny w różnych sklepach (MVP: mock)
+                  Zobacz ceny w różnych sklepach
                 </p>
               </div>
             </div>
@@ -154,54 +154,13 @@ export default function StronaOStronie() {
               <div>
                 <h4 className="font-semibold">Linki do sklepów</h4>
                 <p className="text-sm text-gray-600">
-                  Bezpośrednie linki zakupowe (MVP: przykładowe)
+                  Bezpośrednie linki zakupowe
                 </p>
               </div>
             </div>
           </div>
         </div>
-        
-        {/* Dane kontaktowe - SZABLON */}
-        <div className="bg-white p-8 rounded-lg shadow-md">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            📧 Kontakt
-          </h3>
-          <div className="space-y-3 text-gray-700">
-            <p>
-              Masz pytania, sugestie lub chcesz zgłosić problem? Skontaktuj się z nami:
-            </p>
-            <div className="bg-gray-50 p-4 rounded border-l-4 border-primary-500">
-              <p className="text-sm text-gray-600 mb-2">
-                <strong>Administrator strony:</strong>
-              </p>
-              <p className="text-sm">
-                <strong>Email:</strong> <span className="text-primary-600">[TU WPISZ EMAIL]</span>
-              </p>
-              <p className="text-sm">
-                <strong>Telefon:</strong> <span className="text-primary-600">[TU WPISZ TELEFON]</span>
-              </p>
-              <p className="text-sm">
-                <strong>Adres:</strong> <span className="text-primary-600">[TU WPISZ ADRES]</span>
-              </p>
-            </div>
-            <p className="text-xs text-gray-500 mt-4">
-              Odpowiadamy na wiadomości w ciągu 24-48 godzin (dni robocze).
-            </p>
-          </div>
-        </div>
       </Section>
-      
-      {/* Wersja MVP */}
-      <div className="max-w-4xl mx-auto px-4 pb-12">
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-          <p className="text-sm text-blue-700">
-            <strong>ℹ️ To jest wersja MVP (Minimum Viable Product):</strong> Aplikacja jest 
-            w fazie testowej. Niektóre funkcje (jak porównywanie cen czy linki afiliacyjne) 
-            używają danych przykładowych. Pełna wersja zostanie uruchomiona po pozytywnym 
-            odbiorze MVP.
-          </p>
-        </div>
-      </div>
     </div>
   );
 }

@@ -164,10 +164,6 @@ export default function RootLayout({
                     Status: Online
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                    Wersja: MVP 1.0
-                  </li>
-                  <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                     OpenAI GPT-4o-mini
                   </li>
@@ -186,7 +182,7 @@ export default function RootLayout({
                   © {new Date().getFullYear()} Pomocnik Prezentowy AI. Wszystkie prawa zastrzeżone.
                 </p>
                 <p className="text-xs text-gray-500 text-center">
-                  Projekt MVP. Propozycje generowane przez AI mogą nie być w pełni dokładne.
+                  Propozycje generowane przez AI mogą nie być w pełni dokładne.
                 </p>
               </div>
             </div>
