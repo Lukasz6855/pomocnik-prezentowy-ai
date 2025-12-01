@@ -148,15 +148,17 @@ export default function PolitykaPage() {
           {/* Stylowanie Markdown */}
           <div className="prose prose-lg max-w-none
             prose-headings:font-poppins
-            prose-h1:text-4xl prose-h1:font-bold prose-h1:text-gray-900 prose-h1:mb-6
-            prose-h2:text-2xl prose-h2:font-semibold prose-h2:text-purple-900 prose-h2:mt-12 prose-h2:mb-4
-            prose-h3:text-xl prose-h3:font-semibold prose-h3:text-purple-800 prose-h3:mt-8 prose-h3:mb-3
-            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-4
-            prose-ul:my-4 prose-ul:ml-6
-            prose-li:text-gray-700 prose-li:mb-2
+            prose-h1:text-4xl prose-h1:font-bold prose-h1:text-gray-900 prose-h1:mb-8 prose-h1:mt-0
+            prose-h2:text-2xl prose-h2:font-semibold prose-h2:text-purple-900 prose-h2:mt-12 prose-h2:mb-6 prose-h2:pb-3 prose-h2:border-b prose-h2:border-gray-200
+            prose-h3:text-xl prose-h3:font-semibold prose-h3:text-purple-800 prose-h3:mt-8 prose-h3:mb-4
+            prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-base
+            prose-ul:my-6 prose-ul:ml-6 prose-ul:space-y-2
+            prose-ol:my-6 prose-ol:ml-6 prose-ol:space-y-2
+            prose-li:text-gray-700 prose-li:leading-relaxed
             prose-strong:text-gray-900 prose-strong:font-semibold
-            prose-code:text-purple-600 prose-code:bg-purple-50 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-            prose-blockquote:border-l-4 prose-blockquote:border-purple-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+            prose-em:text-gray-600 prose-em:italic
+            prose-code:text-purple-600 prose-code:bg-purple-50 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm
+            prose-blockquote:border-l-4 prose-blockquote:border-purple-400 prose-blockquote:pl-6 prose-blockquote:py-2 prose-blockquote:my-6 prose-blockquote:bg-purple-50/30 prose-blockquote:italic prose-blockquote:text-gray-700
           ">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {politykaContent}

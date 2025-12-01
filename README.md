@@ -1,6 +1,6 @@
 # 🎁 Pomocnik Prezentowy AI
 
-Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną inteligencję OpenAI GPT-4o-mini i integrację z Allegro API.
+Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną inteligencję OpenAI GPT-4o-mini i integrację z Ceneo API (w toku).
 
 ## 📋 Spis treści
 
@@ -24,8 +24,8 @@ Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną int
 
 Aplikacja wykorzystuje:
 - **OpenAI API** do generowania spersonalizowanych propozycji
-- **Allegro REST API** do wyszukiwania prawdziwych ofert produktów
-- **8 innych sklepów** z linkami do wyszukiwania (Empik, Reserved, Vistula, itp.)
+- **Ceneo API** do porównywania cen i wyszukiwania ofert (integracja w toku - oczekiwanie na zatwierdzenie w programie partnerskim)
+- **9 sklepów** z linkami do wyszukiwania (Allegro, Empik, Reserved, Vistula, itp.)
 
 ## ✨ Funkcje aplikacji
 
@@ -33,8 +33,8 @@ Aplikacja wykorzystuje:
 - **Formularz szczegółowy**: Wybór okazji, płci, relacji, wieku, zainteresowań, stylu, formy prezentu i budżetu
 - **Opis swobodny**: Opis osoby lub sytuacji własnymi słowami
 - **Losuj prezent**: Generowanie kreatywnych, popularnych propozycji bez wypełniania formularza
-- **Integracja z Allegro API**: Prawdziwe oferty produktów z Allegro (do 5 propozycji)
-- **Inne sklepy**: Linki do wyszukiwania w 8+ sklepach internetowych
+- **Integracja z Ceneo API**: Porównywanie cen i ofert produktów (w toku - oczekiwanie na weryfikację w programie partnerskim)
+- **Inne sklepy**: Linki do wyszukiwania w 9 sklepach internetowych
 
 ### ❤️ Ulubione
 - Zapisywanie ulubionych prezentów w `localStorage`
@@ -50,7 +50,7 @@ Aplikacja wykorzystuje:
 - Pełne SEO (metadata, Open Graph, Schema.org, JSON-LD)
 
 ### 🎨 Dodatkowe funkcje
-- Proxy dla obrazków Allegro (bez CORS)
+- Proxy dla obrazków z zewnętrznych źródeł (bez CORS)
 - Responsywny design (mobile-first)
 - Minimalistyczny, elegancki UI z gradientami purple/pink
 - Polityka prywatności (RODO-compliant)
@@ -65,10 +65,10 @@ Aplikacja wykorzystuje:
 - **Język**: TypeScript
 - **Styling**: TailwindCSS
 - **AI**: OpenAI API (GPT-4o-mini)
-- **Integracje**: Allegro REST API (OAuth2 Client Credentials)
+- **Integracje**: Ceneo API (w toku - oczekiwanie na weryfikację w programie partnerskim)
 - **Markdown**: react-markdown + remark-gfm (dla bloga)
 - **Zarządzanie stanem**: React Hooks + localStorage
-- **Deployment**: Vercel (rekomendowane)
+- **Deployment**: Vercel
 
 ## 🚀 Instalacja i uruchomienie
 
@@ -77,7 +77,7 @@ Aplikacja wykorzystuje:
 - Node.js 18.0 lub nowszy
 - npm lub yarn
 - Klucz API OpenAI ([utwórz tutaj](https://platform.openai.com/api-keys))
-- Aplikacja Allegro ([zarejestruj tutaj](https://apps.developer.allegro.pl/))
+- Klucz API Ceneo (w toku - [program partnerski Ceneo](https://www.ceneo.pl/Program_partnerski.xml))
 
 ### Krok 1: Instalacja zależności
 
@@ -100,18 +100,15 @@ Edytuj plik `.env` i dodaj swoje klucze API:
 OPENAI_API_KEY=sk-your-api-key-here
 LLM_MODEL=gpt-4o-mini
 
-# Allegro API (https://developer.allegro.pl)
-ALLEGRO_CLIENT_ID=your-allegro-client-id
-ALLEGRO_CLIENT_SECRET=your-allegro-client-secret
-ALLEGRO_API_URL=https://api.allegro.pl
-ALLEGRO_AUTH_URL=https://allegro.pl/auth/oauth/token
+# Ceneo API (w toku - oczekiwanie na weryfikację)
+# CENEO_API_KEY=your-ceneo-api-key-here
 
 # Google Analytics (opcjonalne)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 **Ważne**: 
-- Utwórz aplikację w [Allegro Developer Portal](https://apps.developer.allegro.pl/)
+- Zarejestruj się w [programie partnerskim Ceneo](https://www.ceneo.pl/Program_partnerski.xml) (weryfikacja 3-7 dni)
 - Pobierz klucz OpenAI z [OpenAI Platform](https://platform.openai.com/api-keys)
 - Plik `.env` jest w `.gitignore` - nie trafi do repozytorium
 
@@ -167,9 +164,8 @@ Artykuły są przechowywane jako pliki JSON w folderze `/articles`:
 ```
 ├── app/                          # Next.js App Router
 │   ├── api/                      # API Routes
-│   │   ├── allegro/search/       # Wyszukiwanie w Allegro API
 │   │   ├── generuj/route.ts      # Generator propozycji prezentów
-│   │   └── proxy-image/route.ts  # Proxy dla obrazków Allegro
+│   │   └── proxy-image/route.ts  # Proxy dla obrazków
 │   ├── blog/                     # Blog (artykuły statyczne)
 │   │   ├── [slug]/page.tsx       # Strona pojedynczego artykułu
 │   │   └── page.tsx              # Lista artykułów + wyszukiwarka
@@ -195,10 +191,9 @@ Artykuły są przechowywane jako pliki JSON w folderze `/articles`:
 │   ├── SearchBar.tsx             # Wyszukiwarka artykułów (blog)
 │   └── Section.tsx               # Sekcja uniwersalna
 ├── lib/                          # Biblioteki i utility
-│   ├── allegroClient.ts          # Klient Allegro OAuth2 + API
 │   ├── articlesLoader.ts         # Ładowanie artykułów z /articles
 │   ├── llmProvider.ts            # Konfiguracja OpenAI
-│   ├── otherShopsHelper.ts       # Linki do innych sklepów (8 sklepów)
+│   ├── otherShopsHelper.ts       # Linki do sklepów (9 sklepów)
 │   └── types.ts                  # Typy TypeScript
 ├── .env                          # Zmienne środowiskowe (nie w repo!)
 ├── .env.example                  # Przykład zmiennych środowiskowych
@@ -208,7 +203,6 @@ Artykuły są przechowywane jako pliki JSON w folderze `/articles`:
 ├── tailwind.config.ts            # Konfiguracja TailwindCSS
 ├── tsconfig.json                 # Konfiguracja TypeScript
 ├── DEPLOYMENT.md                 # Instrukcja wdrożenia na Vercel
-├── ALLEGRO_INTEGRATION.md        # Instrukcja integracji Allegro
 ├── POLITYKA_PRYWATNOSCI.md       # Polityka prywatności (źródło)
 └── README.md                     # Ten plik
 ```
@@ -255,12 +249,11 @@ Generuje propozycje prezentów na podstawie danych wejściowych.
       "why": "Dlaczego pasuje",
       "price_estimate": "150-200 PLN",
       "imageUrl": "/api/proxy-image?url=...",
-      "realImageUrl": "https://a.allegroimg.com/...",
       "shop_links": [
         {
           "shop": "Allegro",
-          "url": "https://allegro.pl/oferta/123456",
-          "isConcreteOffer": true
+          "url": "https://allegro.pl/listing?string=...",
+          "isConcreteOffer": false
         }
       ]
     }
@@ -268,38 +261,13 @@ Generuje propozycje prezentów na podstawie danych wejściowych.
 }
 ```
 
-### GET `/api/allegro/search`
-
-Wyszukuje oferty w Allegro API.
-
-**Query params:**
-```
-?phrase=książka&priceFrom=50&priceTo=200&limit=10
-```
-
-**Odpowiedź:**
-```json
-{
-  "success": true,
-  "offers": [
-    {
-      "id": "123456",
-      "name": "Nazwa produktu",
-      "price": { "amount": "99.99", "currency": "PLN" },
-      "images": [{ "url": "https://..." }],
-      "url": "https://allegro.pl/oferta/123456"
-    }
-  ]
-}
-```
-
 ### GET `/api/proxy-image`
 
-Proxuje obrazki z Allegro (omija CORS).
+Proxuje obrazki z zewnętrznych źródeł (omija CORS).
 
 **Query params:**
 ```
-?url=https://a.allegroimg.com/original/12dbed/...
+?url=https://example.com/image.jpg
 ```
 
 ## 📝 Blog
@@ -334,9 +302,8 @@ Artykuły są przechowywane jako pliki JSON w folderze `/articles`:
 
 ### Funkcje do dodania w przyszłości
 
-- [ ] Weryfikacja Allegro API (oczekiwanie na akceptację)
+- [ ] Dokończenie integracji z Ceneo API (oczekiwanie na weryfikację w programie partnerskim)
 - [ ] Prawdziwe linki afiliacyjne (programy partnerskie)
-- [ ] Porównywarka cen (integracja z Ceneo)
 - [ ] System logowania użytkowników
 - [ ] Synchronizacja ulubionych między urządzeniami
 - [ ] Historia wyszukiwań
@@ -371,7 +338,7 @@ Pełna instrukcja wdrożenia na Vercel znajduje się w pliku **`DEPLOYMENT.md`**
 
 ## ⚠️ Ważne uwagi
 
-- **Allegro API**: Wymaga weryfikacji - do tego czasu możesz otrzymać błąd 403
+- **Ceneo API**: Integracja w toku - oczekiwanie na weryfikację w programie partnerskim (3-7 dni)
 - **Weryfikuj propozycje AI**: AI może się mylić - zawsze sprawdzaj produkty przed zakupem
 - **Koszty API**: Monitoruj użycie OpenAI API (~$0.002 na zapytanie)
 - **Prywatność**: Dane przechowywane tylko w localStorage (brak bazy danych)
@@ -381,7 +348,6 @@ Pełna instrukcja wdrożenia na Vercel znajduje się w pliku **`DEPLOYMENT.md`**
 ## 📄 Dokumentacja
 
 - **DEPLOYMENT.md** - Pełna instrukcja wdrożenia na Vercel
-- **ALLEGRO_INTEGRATION.md** - Instrukcja konfiguracji Allegro API
 - **POLITYKA_PRYWATNOSCI.md** - Polityka prywatności (RODO)
 - **articles/README.md** - Instrukcja dodawania artykułów na blog
 
@@ -395,6 +361,6 @@ W przypadku pytań lub problemów skontaktuj się z administratorem strony.
 
 ---
 
-**Powered by OpenAI GPT-4o-mini + Allegro API + Next.js 14**
+**Powered by OpenAI GPT-4o-mini + Ceneo API (w toku) + Next.js 14**
 
 🎁 Znajdź idealny prezent w 30 sekund!

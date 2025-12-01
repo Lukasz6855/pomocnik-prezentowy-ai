@@ -6,13 +6,8 @@ _Data dokumentu: 29.11.2025 r._
 
 Administratorem danych osobowych użytkowników serwisu **"Pomocnik Prezentowy AI"** jest:
 
-> [TU WPISZ SWOJE DANE]
->
-> np. Imię i nazwisko / nazwa firmy
->
-> adres korespondencyjny
->
-> adres e-mail kontaktowy
+> Łukasz Sachmerda
+> adres e-mail: sachmerda@gmail.com
 
 
 ## 2. Zakres przetwarzanych danych
