@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { lookupProduct } from '@/lib/ceneoClient';
 import type { CeneoLookupResult } from '@/lib/ceneoClient';
 
+// Force dynamic rendering for this API route
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 /**
  * Cache dla wyników wyszukiwania produktów Ceneo
  * TTL: 24 godziny
