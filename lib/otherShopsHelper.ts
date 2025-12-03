@@ -129,7 +129,14 @@ export function createOtherShopProposal(
     description,
     why,
     price_estimate: priceEstimate,
-    affiliate_links: [searchLink],
+    shop_links: [
+      {
+        shop: shop.name,
+        url: searchLink,
+        isConcreteOffer: false, // Link do wyszukiwania, nie konkretna oferta
+      }
+    ],
+    affiliate_links: [searchLink], // Backward compatibility
     source: 'other' as const,
     shopName: shop.name,
     imageUrl: undefined, // Brak obrazka dla sklepów bez API

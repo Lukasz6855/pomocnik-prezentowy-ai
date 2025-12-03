@@ -12,6 +12,22 @@ interface GiftCardProps {
   onToggleUlubiony?: () => void; // Callback do dodania/usunięcia z ulubionych
 }
 
+// Funkcja formatująca cenę: 123.4567 PLN → 123,46 PLN
+function formatujCene(cena: string): string {
+  // Wyciągnij liczbę z ciągu (np. "123.4567 PLN" → "123.4567")
+  const liczba = parseFloat(cena.replace(/[^\d.]/g, ''));
+  
+  if (isNaN(liczba)) {
+    return cena; // Zwróć oryginalny string jeśli nie można sparsować
+  }
+  
+  // Zaokrąglij do 2 miejsc po przecinku i zamień kropkę na przecinek
+  const sformatowana = liczba.toFixed(2).replace('.', ',');
+  
+  // Dodaj "PLN" jeśli był w oryginalnym ciągu
+  return cena.includes('PLN') ? `${sformatowana} PLN` : sformatowana;
+}
+
 export default function GiftCard({ prezent, numer, czyUlubiony = false, onToggleUlubiony }: GiftCardProps) {
   // Stan dla komunikatu o dodaniu do ulubionych
   const [pokazKomunikat, setPokazKomunikat] = useState(false);
@@ -106,40 +122,64 @@ export default function GiftCard({ prezent, numer, czyUlubiony = false, onToggle
           </p>
         </div>
         
-        {/* Szacunkowa cena */}
+        {/* Cena */}
         <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border-2 border-purple-200">
           <h4 className="text-sm font-bold text-purple-600 uppercase mb-2 flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Szacunkowa cena
+            Cena
           </h4>
           <p className="text-3xl font-extrabold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            {prezent.price_estimate}
+            {formatujCene(prezent.price_estimate)}
           </p>
         </div>
         
-        {/* Linki do sklepów - TYLKO SKLEPY Z TĄ OFERTĄ */}
-        {prezent.affiliate_links && prezent.affiliate_links.length > 0 && (
+        {/* Linki do sklepów */}
+        {(prezent.shop_links || prezent.affiliate_links) && (
           <div>
             <h4 className="text-sm font-bold text-gray-800 uppercase mb-3 flex items-center gap-2">
               <ShoppingBag className="w-4 h-4 text-purple-600" />
               Gdzie kupić?
             </h4>
+            
+            {/* Status oferty */}
+            {prezent.source === 'ceneo' && (
+              <p className="text-xs text-purple-600 mb-4 bg-purple-50 px-3 py-2 rounded-lg font-medium flex items-center gap-2">
+                <Sparkles className="w-3 h-3" />
+                Porównanie cen z Ceneo
+              </p>
+            )}
             {prezent.source === 'allegro' && (
               <p className="text-xs text-green-600 mb-4 bg-green-50 px-3 py-2 rounded-lg font-medium">
-                ✅ Konkretna oferta z Allegro
+                ✅ Konkretna oferta
               </p>
             )}
             {prezent.source === 'other' && (
               <p className="text-xs text-blue-600 mb-4 bg-blue-50 px-3 py-2 rounded-lg font-medium">
-                🔍 Link do wyszukiwania w sklepie {prezent.shopName}
+                🔍 Link do wyszukiwania
               </p>
             )}
+            
             <div className="flex flex-wrap gap-3">
-              {prezent.affiliate_links.map((link, index) => {
-                // Określenie nazwy sklepu z linku lub z prezent.shopName
+              {/* Nowy format (shop_links) */}
+              {prezent.shop_links?.map((link, index) => (
+                <a
+                  key={index}
+                  href={link.url}
+                  target="_blank"
+                  rel="nofollow sponsored noopener noreferrer"
+                  className="group inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl hover:shadow-xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 text-sm font-bold"
+                >
+                  <ShoppingBag className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                  {link.shop === 'Ceneo' && '🏷️ '}
+                  Zobacz w {link.shop}
+                  {link.isConcreteOffer && ' ✓'}
+                </a>
+              ))}
+              
+              {/* Stary format (backward compatibility) */}
+              {!prezent.shop_links && prezent.affiliate_links?.map((link, index) => {
                 let shopDisplayName = prezent.shopName || 'Sklep';
                 
-                // Jeśli brak shopName, wyciągnij z URL
                 if (!prezent.shopName) {
                   try {
                     const urlObj = new URL(link);
@@ -155,7 +195,7 @@ export default function GiftCard({ prezent, numer, czyUlubiony = false, onToggle
                     key={index}
                     href={link}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="nofollow sponsored noopener noreferrer"
                     className="group inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl hover:shadow-xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 text-sm font-bold"
                   >
                     <ShoppingBag className="w-4 h-4 group-hover:rotate-12 transition-transform" />

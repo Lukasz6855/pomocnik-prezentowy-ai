@@ -1,6 +1,6 @@
 # Polityka prywatności serwisu "Pomocnik Prezentowy AI"
 
-*Data dokumentu: 02.12.2025 r.*
+*Data dokumentu: 03.12.2025 r.*
 
 ---
 
@@ -22,9 +22,8 @@ W ramach korzystania z serwisu przetwarzane są następujące dane:
 - okazja (np. urodziny, święta)
 - płeć obdarowywanej osoby
 - wiek (lub przedział wiekowy)
-- relacja (np. żona, mąż, przyjaciółka itp.)
-- zainteresowania (słowa kluczowe)
-- preferencje dotyczące stylu prezentu
+- budżet (opcjonalnie przedział cenowy)
+- dodatkowy opis tekstowy zawierający dowolne informacje (opcjonalnie)
 
 **2.2. Dane techniczne związane z korzystaniem z aplikacji (logi serwera):**
 
@@ -70,19 +69,20 @@ W ramach działania serwisu korzystamy z usług zewnętrznych dostawców:
 
 **4.1. OpenAI / dostawca modeli AI**
 
-Integracja z API modelu językowego:
+Integracja z API modelu językowego OpenAI GPT-4o-mini:
 
-- do API przesyłany jest opis sytuacji prezentowej (np. okazja, zainteresowania, preferencje)
-- model AI przetwarza te dane i zwraca zoptymalizowane propozycje prezentów
+- do API przesyłany jest opis sytuacji prezentowej (np. okazja, płeć, wiek, budżet, opcjonalny opis)
+- model AI przetwarza te dane i zwraca zoptymalizowane propozycje pomysłów na prezenty
 - nie przesyłamy do modelu danych identyfikujących konkretną osobę
 
-**4.2. Ceneo (w toku)**
+**4.2. Ceneo API**
 
-Integracja z Ceneo API jest w fazie realizacji:
+Integracja z Ceneo API:
 
-- po uzyskaniu dostępu do programu partnerskiego Ceneo, aplikacja będzie mogła wysyłać zapytania dotyczące ofert produktów
-- w odpowiedzi otrzyma listę publicznie dostępnych ofert (nazwa, cena, link do oferty itp.)
-- dane te będą używane wyłącznie w celu prezentacji propozycji użytkownikowi
+- aplikacja wysyła zapytania do Ceneo API z frazami wyszukiwania wygenerowanymi przez AI
+- w odpowiedzi otrzymujemy listę publicznie dostępnych ofert produktów (nazwa, cena, zdjęcie, link)
+- dane te są używane wyłącznie w celu prezentacji propozycji użytkownikowi
+- linki do produktów zawierają identyfikator partnera, co pozwala nam otrzymać prowizję od zakupów
 
 **4.3. Dostawcy infrastruktury serwerowej / hostingowej**
 
@@ -141,7 +141,7 @@ Informacje o stosowanych cookies oraz możliwości ich konfiguracji za pomocą u
 
 ## 9. Profilowanie i zautomatyzowane podejmowanie decyzji
 
-W ramach serwisu stosowane jest profilowanie w znaczeniu potocznym – aplikacja na podstawie podanych danych (np. wiek, zainteresowania, okazja) generuje dopasowane propozycje prezentów.
+W ramach serwisu stosowane jest profilowanie w znaczeniu potocznym – aplikacja na podstawie podanych danych (np. wiek, płeć, okazja, budżet) generuje dopasowane propozycje prezentów.
 
 Nie jest to jednak profilowanie wywołujące skutki prawne wobec użytkownika w rozumieniu art. 22 RODO.
 
@@ -165,5 +165,5 @@ O istotnych zmianach użytkownicy będą informowani poprzez opublikowanie nowej
 
 ---
 
-*Ostatnia aktualizacja: 02.12.2025*
+*Ostatnia aktualizacja: 03.12.2025*
 

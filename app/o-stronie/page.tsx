@@ -16,30 +16,29 @@ export default function StronaOStronie() {
           <div className="space-y-4 text-gray-700">
             <p>
               <strong>Pomocnik Prezentowy AI</strong> to nowoczesna aplikacja webowa wykorzystująca 
-              sztuczną inteligencję do generowania spersonalizowanych propozycji prezentów.
+              sztuczną inteligencję do generowania spersonalizowanych propozycji prezentów z rzeczywistymi produktami.
             </p>
             <p>
-              Nasza aplikacja analizuje podane przez Ciebie informacje o osobie obdarowanej 
-              (wiek, płeć, zainteresowania, okazja, budżet) i na tej podstawie generuje listę 
-              najlepiej dopasowanych pomysłów na prezenty.
+              Nasza aplikacja działa w trzech krokach:
             </p>
-            <p>
-              Możesz skorzystać z dwóch trybów:
+            <ol className="list-decimal list-inside space-y-3 ml-4">
+              <li>
+                <strong>Zbieramy informacje</strong> - podajesz podstawowe dane: okazję, płeć, wiek i budżet. 
+                Opcjonalnie możesz dodać szczegółowy opis swoimi słowami.
+              </li>
+              <li>
+                <strong>AI generuje pomysły</strong> - sztuczna inteligencja analizuje Twoje dane i tworzy 
+                10-12 różnorodnych pomysłów na prezenty, dopasowanych do kontekstu.
+              </li>
+              <li>
+                <strong>Propozycje prezentów</strong> - dla każdego pomysłu AI wyszukujemy rzeczywiste produkty, sprawdzając ceny, oceny i dostępność. Otrzymujesz do 10 konkretnych propozycji 
+                z linkami do porównywarki cen Ceneo, gdzie możesz dokonać bezpośredniego zakupu lub wybrać inny preferowany sklep.
+              </li>
+            </ol>
+            <p className="mt-4 bg-purple-50 p-4 rounded-lg border border-purple-200">
+              <strong>💡 Wskazówka:</strong> Im więcej szczegółów podasz w opisie tekstowym, tym bardziej 
+              dopasowane będą propozycje. Możesz opisać osobowość, hobby, to co osoba już ma, itp.
             </p>
-            <ul className="list-disc list-inside space-y-2 ml-4">
-              <li>
-                <strong>Formularz szczegółowy</strong> - wypełnij wszystkie kryteria, 
-                a AI dopasuje prezenty maksymalnie precyzyjnie
-              </li>
-              <li>
-                <strong>Opis swobodny</strong> - opisz swoimi słowami osobę lub sytuację, 
-                a AI zrozumie kontekst i zaproponuje odpowiednie prezenty
-              </li>
-              <li>
-                <strong>Losuj prezent</strong> - otrzymaj kreatywne, popularne propozycje 
-                bez podawania szczegółów
-              </li>
-            </ul>
           </div>
         </div>
         
@@ -50,19 +49,21 @@ export default function StronaOStronie() {
           </h3>
           <div className="space-y-3 text-gray-700">
             <p>
-              Aplikacja wykorzystuje zaawansowane modele językowe OpenAI (GPT-4o-mini), 
-              które potrafią zrozumieć kontekst i generować trafne, kreatywne propozycje prezentów.
+              Aplikacja wykorzystuje zaawansowane modele sztucznej inteligencji OpenAI oraz 
+              integrację z Ceneo, największą polską porównywarką cen.
             </p>
             <p>
-              Przy doborze prezentów AI uwzględnia:
+              <strong>Jak to działa technicznie:</strong>
             </p>
-            <ul className="list-disc list-inside space-y-1 ml-4">
-              <li>Popularność i trendy w 2025 roku</li>
-              <li>Opinie użytkowników i oceny produktów</li>
-              <li>Dopasowanie do osobowości i zainteresowań</li>
-              <li>Budżet i dostępność</li>
-              <li>Okazję i kontekst społeczny</li>
+            <ul className="list-disc list-inside space-y-2 ml-4">
+              <li><strong>OpenAI GPT</strong> - generuje kreatywne, dopasowane pomysły na prezenty na podstawie Twoich danych</li>
+              <li><strong>Ceneo</strong> - wyszukuje rzeczywiste produkty, sprawdza ceny i dostępność</li>
+              <li><strong>Dobór propozycji przez AI</strong> - system wybiera najlepiej pasujące produkty według popularności i ocen</li>
+              <li><strong>Przekierowanie do sklepu</strong> - generujemy linki do Ceneo</li>
             </ul>
+            <p className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded">
+              Wszystkie propozycje pochodzą z prawdziwych ofert dostępnych w Ceneo - nie wymyślamy produktów ani cen.
+            </p>
           </div>
         </div>
         
@@ -74,26 +75,23 @@ export default function StronaOStronie() {
           </h3>
           <div className="space-y-3 text-yellow-800 text-sm">
             <p>
-              <strong>To są jedynie propozycje oparte na AI:</strong> Wszystkie sugestie prezentów 
-              są generowane automatycznie przez sztuczną inteligencję. Nie gwarantujemy, że każdy 
-              prezent będzie idealnie dopasowany - AI może się mylić.
+              <strong>To są propozycje AI + rzeczywiste produkty z Ceneo:</strong> Pomysły na prezenty 
+              generuje AI, a produkty pochodzą z prawdziwych ofert w Ceneo. Jednak AI może zaproponować 
+              coś nieodpowiedniego - zawsze kieruj się zdrowym rozsądkiem.
             </p>
             <p>
-              <strong>Weryfikuj przed zakupem:</strong> Przed dokonaniem zakupu zawsze sprawdź:
+              <strong>Weryfikuj przed zakupem:</strong> Kliknięcie w link przenosi Cię do Ceneo, 
+              gdzie możesz:
             </p>
             <ul className="list-disc list-inside ml-4 space-y-1">
-              <li>Czy produkt faktycznie istnieje i jest dostępny</li>
-              <li>Aktualne ceny i opinie</li>
-              <li>Czy prezent na pewno będzie odpowiedni dla obdarowanej osoby</li>
+              <li>Sprawdzić aktualne ceny w różnych sklepach</li>
+              <li>Przeczytać opinie innych użytkowników</li>
+              <li>Porównać parametry i warianty produktu</li>
+              <li>Wybrać najlepszą ofertę dla siebie</li>
             </ul>
             <p>
-              <strong>Linki afiliacyjne:</strong> Linki do sklepów mogą być linkami afiliacyjnymi. 
-              Linki prowadzą do wyszukiwania produktu w sklepie - nie zawsze będzie to 
-              dokładnie ten sam produkt/oferta.
-            </p>
-            <p>
-              <strong>Prywatność:</strong> Nie zbieramy danych osobowych. Ulubione prezenty są 
-              zapisywane lokalnie w Twojej przeglądarce (localStorage).
+              <strong>Prywatność:</strong> Nie przechowujemy Twoich danych osobowych na serwerze. 
+              Ulubione prezenty zapisują się lokalnie w Twojej przeglądarce.
             </p>
           </div>
         </div>

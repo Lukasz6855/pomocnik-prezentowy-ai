@@ -1,6 +1,6 @@
 # 🎁 Pomocnik Prezentowy AI
 
-Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną inteligencję OpenAI GPT-4o-mini i integrację z Ceneo API (w toku).
+Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną inteligencję OpenAI GPT-4o-mini i integrację z Ceneo API.
 
 ## 📋 Spis treści
 
@@ -18,23 +18,22 @@ Inteligentny asystent w wyborze idealnego prezentu wykorzystujący sztuczną int
 ## 🎯 Opis projektu
 
 **Pomocnik Prezentowy AI** to aplikacja webowa stworzona w Next.js 14, która pomaga użytkownikom w znalezieniu idealnego prezentu na podstawie:
-- Szczegółowego formularza z danymi o obdarowanej osobie
-- Swobodnego opisu tekstowego
-- Losowania kreatywnych, popularnych prezentów
+- Prostego formularza z podstawowymi danymi (okazja, płeć, wiek, budżet)
+- Opcjonalnego opisu tekstowego zawierającego dodatkowe informacje
 
 Aplikacja wykorzystuje:
-- **OpenAI API** do generowania spersonalizowanych propozycji
-- **Ceneo API** do porównywania cen i wyszukiwania ofert (integracja w toku - oczekiwanie na zatwierdzenie w programie partnerskim)
-- **9 sklepów** z linkami do wyszukiwania (Allegro, Empik, Reserved, Vistula, itp.)
+- **OpenAI API (GPT-4o-mini)** do generowania spersonalizowanych pomysłów na prezenty
+- **Ceneo API** do wyszukiwania rzeczywistych produktów i ofert z linkami afiliacyjnymi
 
 ## ✨ Funkcje aplikacji
 
 ### 🎯 Wyszukiwarka prezentów
-- **Formularz szczegółowy**: Wybór okazji, płci, relacji, wieku, zainteresowań, stylu, formy prezentu i budżetu
-- **Opis swobodny**: Opis osoby lub sytuacji własnymi słowami
-- **Losuj prezent**: Generowanie kreatywnych, popularnych propozycji bez wypełniania formularza
-- **Integracja z Ceneo API**: Porównywanie cen i ofert produktów (w toku - oczekiwanie na weryfikację w programie partnerskim)
-- **Inne sklepy**: Linki do wyszukiwania w 9 sklepach internetowych
+- **Uproszczony formularz**: Wybór okazji, płci, wieku i budżetu
+- **Opcjonalny opis tekstowy**: Możliwość dodania szczegółowych informacji własnymi słowami
+- **Integracja z Ceneo API**: Wyszukiwanie rzeczywistych produktów w Ceneo z linkami afiliacyjnymi
+- **Wyświetlanie do 10 propozycji**: Różnorodne pomysły z prawdziwych ofert dostępnych w Ceneo
+- **Grid 2-kolumnowy**: Responsywny układ prezentujący po 2 produkty w rzędzie (na desktopach)
+- **Formatowanie cen**: Polski standard z przecinkiem jako separator dziesiętny (np. 123,45 PLN)
 
 ### ❤️ Ulubione
 - Zapisywanie ulubionych prezentów w `localStorage`
@@ -65,7 +64,7 @@ Aplikacja wykorzystuje:
 - **Język**: TypeScript
 - **Styling**: TailwindCSS
 - **AI**: OpenAI API (GPT-4o-mini)
-- **Integracje**: Ceneo API (w toku - oczekiwanie na weryfikację w programie partnerskim)
+- **Integracje**: Ceneo API (OAuth 2.0, PartnerService)
 - **Markdown**: react-markdown + remark-gfm (dla bloga)
 - **Zarządzanie stanem**: React Hooks + localStorage
 - **Deployment**: Vercel
@@ -77,7 +76,7 @@ Aplikacja wykorzystuje:
 - Node.js 18.0 lub nowszy
 - npm lub yarn
 - Klucz API OpenAI ([utwórz tutaj](https://platform.openai.com/api-keys))
-- Klucz API Ceneo (w toku - [program partnerski Ceneo](https://www.ceneo.pl/Program_partnerski.xml))
+- Klucz API Ceneo ([program partnerski Ceneo](https://www.ceneo.pl/Program_partnerski.xml))
 
 ### Krok 1: Instalacja zależności
 
@@ -100,17 +99,19 @@ Edytuj plik `.env` i dodaj swoje klucze API:
 OPENAI_API_KEY=sk-your-api-key-here
 LLM_MODEL=gpt-4o-mini
 
-# Ceneo API (w toku - oczekiwanie na weryfikację)
-# CENEO_API_KEY=your-ceneo-api-key-here
+# Ceneo API (Program Partnerski)
+CENEO_API_KEY=your-ceneo-api-key-here
+CENEO_PARTNER_ID=your-partner-id
 
 # Google Analytics (opcjonalne)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 ```
 
 **Ważne**: 
-- Zarejestruj się w [programie partnerskim Ceneo](https://www.ceneo.pl/Program_partnerski.xml) (weryfikacja 3-7 dni)
+- Zarejestruj się w [programie partnerskim Ceneo](https://www.ceneo.pl/Program_partnerski.xml)
 - Pobierz klucz OpenAI z [OpenAI Platform](https://platform.openai.com/api-keys)
 - Plik `.env` jest w `.gitignore` - nie trafi do repozytorium
+- Szczegóły integracji Ceneo: [CENEO_INTEGRATION.md](./CENEO_INTEGRATION.md)
 
 ### Krok 3: Uruchomienie aplikacji w trybie deweloperskim
 
@@ -216,16 +217,12 @@ Generuje propozycje prezentów na podstawie danych wejściowych.
 **Body:**
 ```json
 {
-  "typ": "formularz" | "opis" | "losowy",
+  "typ": "formularz" | "opis",
   "dane": {
     // Dla typu "formularz":
     "okazja": "urodziny",
     "plec": "kobieta",
-    "relacja": "Mama",
     "wiek": "60 lat",
-    "zainteresowania": ["Gotowanie", "Książki"],
-    "stylPrezentu": "praktyczny",
-    "formaPrezentu": ["rzeczowy"],
     "budzetOd": "100",
     "budzetDo": "300"
     
@@ -302,8 +299,8 @@ Artykuły są przechowywane jako pliki JSON w folderze `/articles`:
 
 ### Funkcje do dodania w przyszłości
 
-- [ ] Dokończenie integracji z Ceneo API (oczekiwanie na weryfikację w programie partnerskim)
-- [ ] Prawdziwe linki afiliacyjne (programy partnerskie)
+- [ ] Panel administracyjny do zarządzania kluczami API
+- [ ] Prawdziwe linki afiliacyjne do większej liczby sklepów
 - [ ] System logowania użytkowników
 - [ ] Synchronizacja ulubionych między urządzeniami
 - [ ] Historia wyszukiwań
@@ -338,7 +335,8 @@ Pełna instrukcja wdrożenia na Vercel znajduje się w pliku **`DEPLOYMENT.md`**
 
 ## ⚠️ Ważne uwagi
 
-- **Ceneo API**: Integracja w toku - oczekiwanie na weryfikację w programie partnerskim (3-7 dni)
+- **Ceneo API**: Wymaga klucza API z programu partnerskiego (testowy na 90 dni, potem stały)
+- **Cache**: Produkty z Ceneo cachowane przez 24h (oszczędność zapytań API)
 - **Weryfikuj propozycje AI**: AI może się mylić - zawsze sprawdzaj produkty przed zakupem
 - **Koszty API**: Monitoruj użycie OpenAI API (~$0.002 na zapytanie)
 - **Prywatność**: Dane przechowywane tylko w localStorage (brak bazy danych)
@@ -348,6 +346,7 @@ Pełna instrukcja wdrożenia na Vercel znajduje się w pliku **`DEPLOYMENT.md`**
 ## 📄 Dokumentacja
 
 - **DEPLOYMENT.md** - Pełna instrukcja wdrożenia na Vercel
+- **CENEO_INTEGRATION.md** - Szczegółowa dokumentacja integracji Ceneo API
 - **POLITYKA_PRYWATNOSCI.md** - Polityka prywatności (RODO)
 - **articles/README.md** - Instrukcja dodawania artykułów na blog
 
@@ -361,6 +360,6 @@ W przypadku pytań lub problemów skontaktuj się z administratorem strony.
 
 ---
 
-**Powered by OpenAI GPT-4o-mini + Ceneo API (w toku) + Next.js 14**
+**Powered by OpenAI GPT-4o-mini + Ceneo API + Next.js 14**
 
 🎁 Znajdź idealny prezent w 30 sekund!

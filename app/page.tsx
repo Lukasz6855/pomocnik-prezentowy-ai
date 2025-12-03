@@ -7,84 +7,27 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Section from '@/components/Section';
 import HeroSection from '@/components/HeroSection';
 import { Prezent, DaneFormularza } from '@/lib/types';
-import { Sparkles, Wand2 } from 'lucide-react';
-
-// Lista zainteresowań dostępnych w formularzu
-const ZAINTERESOWANIA = [
-  'Sport i fitness',
-  'Książki i czytanie',
-  'Technologia i gadżety',
-  'Gotowanie i kulinaria',
-  'Podróże',
-  'Muzyka',
-  'Filmy i seriale',
-  'Gry (planszowe/komputerowe)',
-  'Sztuka i rękodzieło',
-  'Fotografia'
-];
-
-// Lista relacji
-const RELACJE = [
-  'Mąż/Żona',
-  'Dziecko',
-  'Partner/Partnerka',
-  'Mama',
-  'Tata',
-  'Dziadek',
-  'Babcia',
-  'Szef/Szefowa',
-  'Znajomy/Znajoma',
-  'Brat/Siostra'
-];
+import { AlertCircle } from 'lucide-react';
 
 export default function StronaGlowna() {
   // Stan komponentu
-  const [aktywnyTab, setAktywnyTab] = useState<'formularz' | 'opis'>('formularz'); // Aktywna zakładka
   const [ladowanie, setLadowanie] = useState(false); // Czy trwa ładowanie
   const [prezenty, setPrezenty] = useState<Prezent[]>([]); // Lista wygenerowanych prezentów
   const [komunikatBledu, setKomunikatBledu] = useState<string | null>(null); // Komunikat błędu
   
-  // Stan formularza
+  // Stan formularza (UPROSZCZONY - tylko: Okazja, Płeć, Wiek, Budżet)
   const [okazja, setOkazja] = useState('urodziny');
   const [okazjaInna, setOkazjaInna] = useState('');
   const [plec, setPlec] = useState('kobieta');
-  const [relacja, setRelacja] = useState('Znajomy/Znajoma');
-  const [relacjaInna, setRelacjaInna] = useState('');
   const [wiek, setWiek] = useState('');
-  const [zainteresowania, setZainteresowania] = useState<string[]>(['Sport i fitness']);
-  const [zainteresowaniaInne, setZainteresowaniaInne] = useState('');
-  const [stylPrezentu, setStylPrezentu] = useState('normalny');
-  const [formaPrezentu, setFormaPrezentu] = useState<string[]>(['rzeczowy']);
   const [budzetOd, setBudzetOd] = useState('');
   const [budzetDo, setBudzetDo] = useState('');
   
-  // Stan opisu tekstowego
+  // Stan opisu tekstowego (teraz zawsze widoczny obok formularza)
   const [opisTekstowy, setOpisTekstowy] = useState('');
   
-  // Obsługa zaznaczania zainteresowań (checkbox)
-  const obsluzZainteresowanie = (zainteresowanie: string) => {
-    if (zainteresowania.includes(zainteresowanie)) {
-      // Usunięcie zainteresowania
-      setZainteresowania(zainteresowania.filter(z => z !== zainteresowanie));
-    } else {
-      // Dodanie zainteresowania
-      setZainteresowania([...zainteresowania, zainteresowanie]);
-    }
-  };
-  
-  // Obsługa zaznaczania formy prezentu (checkbox)
-  const obsluzFormePrezentu = (forma: string) => {
-    if (formaPrezentu.includes(forma)) {
-      // Usunięcie formy
-      setFormaPrezentu(formaPrezentu.filter(f => f !== forma));
-    } else {
-      // Dodanie formy
-      setFormaPrezentu([...formaPrezentu, forma]);
-    }
-  };
-  
-  // Funkcja wysyłająca zapytanie do API
-  const wyslijZapytanie = async (typ: 'formularz' | 'opis' | 'losowy', dane?: any) => {
+  // Funkcja wysyłająca zapytanie do API (UPROSZCZONA - tylko formularz + opis)
+  const wyslijZapytanie = async (dane: any) => {
     setLadowanie(true); // Włączenie loadera
     setKomunikatBledu(null); // Wyczyszczenie błędów
     setPrezenty([]); // Wyczyszczenie poprzednich wyników
@@ -96,15 +39,13 @@ export default function StronaGlowna() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          typ: typ,
-          dane: dane || {}
-        }),
+        body: JSON.stringify(dane),
       });
       
       // Sprawdzenie statusu odpowiedzi
       if (!odpowiedz.ok) {
-        throw new Error('Błąd podczas generowania propozycji');
+        const errorData = await odpowiedz.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Błąd podczas generowania propozycji');
       }
       
       // Parsowanie odpowiedzi JSON
@@ -133,46 +74,39 @@ export default function StronaGlowna() {
     }
   };
   
-  // Obsługa wysłania formularza
+  // Obsługa wysłania formularza (UPROSZCZONY - bez Relacji, Zainteresowań, Stylu, Formy)
   const obsluzWyslanieFomularza = (e: React.FormEvent) => {
     e.preventDefault(); // Zapobieganie domyślnej akcji formularza
     
-    // Przygotowanie danych formularza
+    // Walidacja podstawowa
+    if (!budzetDo) {
+      setKomunikatBledu('Proszę podać maksymalny budżet');
+      return;
+    }
+    
+    // Przygotowanie danych - połączenie formularza + opis tekstowy
     const daneFormularza: DaneFormularza = {
       okazja: okazja === 'inne' ? okazjaInna : okazja,
       plec: plec,
-      relacja: relacja === 'Inne' ? relacjaInna : relacja,
       wiek: wiek,
-      zainteresowania: zainteresowaniaInne 
-        ? [...zainteresowania, zainteresowaniaInne] 
-        : zainteresowania,
-      stylPrezentu: stylPrezentu,
-      formaPrezentu: formaPrezentu,
       budzetOd: budzetOd,
       budzetDo: budzetDo
     };
     
-    // Wysłanie zapytania
-    wyslijZapytanie('formularz', daneFormularza);
-  };
-  
-  // Obsługa wysłania opisu
-  const obsluzWyslanieOpisu = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Walidacja
-    if (!opisTekstowy.trim()) {
-      setKomunikatBledu('Proszę wpisać opis');
-      return;
+    // Jeśli jest opis tekstowy, użyj trybu 'opis', jeśli nie - 'formularz'
+    if (opisTekstowy.trim()) {
+      wyslijZapytanie({
+        typ: 'opis',
+        dane: {
+          opis: `${opisTekstowy}\n\nDodatkowe info z formularza: Okazja: ${daneFormularza.okazja}, Płeć: ${plec}, Wiek: ${wiek || 'nieokreślony'}, Budżet: ${budzetOd || '0'}-${budzetDo} PLN`
+        }
+      });
+    } else {
+      wyslijZapytanie({
+        typ: 'formularz',
+        dane: daneFormularza
+      });
     }
-    
-    // Wysłanie zapytania
-    wyslijZapytanie('opis', { opis: opisTekstowy });
-  };
-  
-  // Obsługa losowania prezentu
-  const obsluzLosujPrezent = () => {
-    wyslijZapytanie('losowy', {});
   };
   
   // Zarządzanie ulubionymi (localStorage)
@@ -224,291 +158,160 @@ export default function StronaGlowna() {
       <Section 
         id="formularz"
         tytul="Wyszukaj Prezent" 
-        opis="Wypełnij formularz lub opisz sytuację - AI znajdzie idealne propozycje!"
+        opis="Wypełnij podstawowe informacje i opcjonalnie dodaj szczegółowy opis - AI znajdzie idealne propozycje!"
         className="py-16"
       >
-        <div className="max-w-4xl mx-auto">
-          {/* Przycisk losowego prezentu */}
-          <div className="flex justify-center mb-8">
-            <button
-              onClick={obsluzLosujPrezent}
-              disabled={ladowanie}
-              className="group bg-gradient-to-r from-yellow-400 via-pink-400 to-purple-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
-            >
-              <Wand2 className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-              Losuj Kreatywny Prezent
-              <Sparkles className="w-5 h-5 group-hover:scale-125 transition-transform" />
-            </button>
-          </div>
-          
-          {/* Zakładki: Formularz / Opis */}
-          <div className="flex border-b-2 border-purple-200 mb-8 bg-white rounded-t-2xl overflow-hidden shadow-lg">
-            <button
-              onClick={() => setAktywnyTab('formularz')}
-              className={`flex-1 py-4 px-6 font-bold transition-all duration-300 ${
-                aktywnyTab === 'formularz'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                  : 'text-gray-600 hover:bg-purple-50'
-              }`}
-            >
-              📋 Wypełnij Formularz
-            </button>
-            <button
-              onClick={() => setAktywnyTab('opis')}
-              className={`flex-1 py-4 px-6 font-bold transition-all duration-300 ${
-                aktywnyTab === 'opis'
-                  ? 'bg-gradient-to-r from-purple-600 to-pink-500 text-white shadow-lg'
-                  : 'text-gray-600 hover:bg-purple-50'
-              }`}
-            >
-              ✍️ Opisz Swoimi Słowami
-            </button>
-          </div>
-          
-          {/* Formularz szczegółowy */}
-          {aktywnyTab === 'formularz' && (
-            <form onSubmit={obsluzWyslanieFomularza} className="space-y-8 bg-white p-8 rounded-2xl shadow-2xl border border-purple-100">
-              {/* Okazja */}
-              <div>
-                <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  🎉 Okazja *
-                </label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">{['urodziny', 'imieniny', 'chrzest', 'ślub', 'rocznica ślubu', 'Mikołaj', 'pod choinkę', 'walentynkowy'].map(o => (
-                    <label key={o} className="flex items-center space-x-2 cursor-pointer group">
+        <div className="max-w-7xl mx-auto">
+          {/* NOWY LAYOUT: Formularz + Pole tekstowe obok siebie */}
+          <form onSubmit={obsluzWyslanieFomularza} className="space-y-8">
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* LEWA KOLUMNA: Formularz podstawowy */}
+              <div className="bg-white p-8 rounded-2xl shadow-2xl border border-purple-100 space-y-6">
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b-2 border-purple-200 pb-2">
+                  📋 Podstawowe Informacje
+                </h3>
+                
+                {/* Okazja */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    🎉 Okazja *
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {['urodziny', 'imieniny', 'chrzest', 'ślub', 'rocznica ślubu', 'Mikołaj', 'pod choinkę', 'walentynkowy'].map(o => (
+                      <label key={o} className="flex items-center space-x-2 cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="okazja"
+                          value={o}
+                          checked={okazja === o}
+                          onChange={(e) => setOkazja(e.target.value)}
+                          className="w-4 h-4 text-purple-600"
+                        />
+                        <span className="text-sm group-hover:text-purple-600">{o.charAt(0).toUpperCase() + o.slice(1)}</span>
+                      </label>
+                    ))}
+                    <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="radio"
                         name="okazja"
-                        value={o}
-                        checked={okazja === o}
+                        value="inne"
+                        checked={okazja === 'inne'}
                         onChange={(e) => setOkazja(e.target.value)}
-                        className="w-4 h-4 text-primary-600"
+                        className="w-4 h-4 text-purple-600"
                       />
-                      <span className="text-sm">{o.charAt(0).toUpperCase() + o.slice(1)}</span>
+                      <span className="text-sm">Inne</span>
                     </label>
-                  ))}
-                  <label className="flex items-center space-x-2 cursor-pointer">
+                  </div>
+                  {okazja === 'inne' && (
                     <input
-                      type="radio"
-                      name="okazja"
-                      value="inne"
-                      checked={okazja === 'inne'}
-                      onChange={(e) => setOkazja(e.target.value)}
-                      className="w-4 h-4 text-primary-600"
+                      type="text"
+                      value={okazjaInna}
+                      onChange={(e) => setOkazjaInna(e.target.value)}
+                      placeholder="Wpisz okazję..."
+                      className="mt-3 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
-                    <span className="text-sm">Inne</span>
-                  </label>
+                  )}
                 </div>
-                {okazja === 'inne' && (
+                
+                {/* Płeć */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    👤 Płeć obdarowanej osoby *
+                  </label>
+                  <div className="flex gap-4">
+                    {['kobieta', 'mężczyzna', 'para/małżeństwo'].map(p => (
+                      <label key={p} className="flex items-center space-x-2 cursor-pointer group">
+                        <input
+                          type="radio"
+                          name="plec"
+                          value={p}
+                          checked={plec === p}
+                          onChange={(e) => setPlec(e.target.value)}
+                          className="w-4 h-4 text-purple-600"
+                        />
+                        <span className="text-sm group-hover:text-purple-600">{p.charAt(0).toUpperCase() + p.slice(1)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                
+                {/* Wiek */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    🎂 Wiek lub rocznica
+                  </label>
                   <input
                     type="text"
-                    value={okazjaInna}
-                    onChange={(e) => setOkazjaInna(e.target.value)}
-                    placeholder="Wpisz okazję..."
-                    className="mt-3 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    value={wiek}
+                    onChange={(e) => setWiek(e.target.value)}
+                    placeholder="np. 30 lat, 10 rocznica ślubu..."
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                )}
-              </div>
-              
-              {/* Płeć */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Płeć obdarowanej osoby *
-                </label>
-                <div className="flex gap-4">
-                  {['kobieta', 'mężczyzna', 'para/małżeństwo'].map(p => (
-                    <label key={p} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="plec"
-                        value={p}
-                        checked={plec === p}
-                        onChange={(e) => setPlec(e.target.value)}
-                        className="w-4 h-4 text-primary-600"
-                      />
-                      <span className="text-sm">{p.charAt(0).toUpperCase() + p.slice(1)}</span>
-                    </label>
-                  ))}
                 </div>
-              </div>
-              
-              {/* Relacja */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Relacja
-                </label>
-                <select
-                  value={relacja}
-                  onChange={(e) => setRelacja(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  {RELACJE.map(r => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                  <option value="Inne">Inne</option>
-                </select>
-                {relacja === 'Inne' && (
-                  <input
-                    type="text"
-                    value={relacjaInna}
-                    onChange={(e) => setRelacjaInna(e.target.value)}
-                    placeholder="Wpisz relację..."
-                    className="mt-3 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                )}
-              </div>
-              
-              {/* Wiek */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Wiek lub rocznica
-                </label>
-                <input
-                  type="text"
-                  value={wiek}
-                  onChange={(e) => setWiek(e.target.value)}
-                  placeholder="np. 30 lat, 10 rocznica ślubu..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-              </div>
-              
-              {/* Zainteresowania */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Zainteresowania (możesz wybrać więcej)
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  {ZAINTERESOWANIA.map(z => (
-                    <label key={z} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={zainteresowania.includes(z)}
-                        onChange={() => obsluzZainteresowanie(z)}
-                        className="w-4 h-4 text-primary-600 rounded"
-                      />
-                      <span className="text-sm">{z}</span>
-                    </label>
-                  ))}
-                  <label className="flex items-center space-x-2">
-                    <input type="checkbox" disabled className="w-4 h-4 rounded" />
-                    <span className="text-sm">Inne:</span>
+                
+                {/* Budżet */}
+                <div>
+                  <label className="block text-sm font-bold text-gray-800 mb-3">
+                    💰 Budżet (PLN) *
                   </label>
-                </div>
-                <input
-                  type="text"
-                  value={zainteresowaniaInne}
-                  onChange={(e) => setZainteresowaniaInne(e.target.value)}
-                  placeholder="Wpisz inne zainteresowania..."
-                  className="mt-3 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                />
-              </div>
-              
-              {/* Styl prezentu */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Styl prezentu
-                </label>
-                <select
-                  value={stylPrezentu}
-                  onChange={(e) => setStylPrezentu(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="normalny">Normalny</option>
-                  <option value="praktyczny">Praktyczny</option>
-                  <option value="formalny/oficjalny">Formalny/Oficjalny</option>
-                  <option value="biznesowy/służbowy">Biznesowy/Służbowy</option>
-                  <option value="na luzie">Na luzie</option>
-                  <option value="śmieszny">Śmieszny</option>
-                  <option value="luksusowy">Luksusowy</option>
-                  <option value="kreatywny">Kreatywny</option>
-                  <option value="handmade">Handmade</option>
-                </select>
-              </div>
-              
-              {/* Forma prezentu */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Forma prezentu (możesz wybrać więcej)
-                </label>
-                <div className="space-y-2">
-                  {[
-                    { value: 'rzeczowy', label: 'Rzeczowy' },
-                    { value: 'bilet', label: 'Bilet na event/koncert' },
-                    { value: 'odpoczynek', label: 'Odpoczynek (hotel/spa)' },
-                    { value: 'voucher', label: 'Voucher prezentowy' }
-                  ].map(f => (
-                    <label key={f.value} className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formaPrezentu.includes(f.value)}
-                        onChange={() => obsluzFormePrezentu(f.value)}
-                        className="w-4 h-4 text-primary-600 rounded"
-                      />
-                      <span className="text-sm">{f.label}</span>
-                    </label>
-                  ))}
+                  <div className="flex gap-2 items-center">
+                    <input
+                      type="number"
+                      value={budzetOd}
+                      onChange={(e) => setBudzetOd(e.target.value)}
+                      placeholder="Od"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                    />
+                    <span className="text-gray-500 flex-shrink-0">-</span>
+                    <input
+                      type="number"
+                      value={budzetDo}
+                      onChange={(e) => setBudzetDo(e.target.value)}
+                      placeholder="Do"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm"
+                    />
+                  </div>
                 </div>
               </div>
               
-              {/* Budżet */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Budżet (PLN)
-                </label>
-                <div className="flex gap-3 items-center">
-                  <input
-                    type="number"
-                    value={budzetOd}
-                    onChange={(e) => setBudzetOd(e.target.value)}
-                    placeholder="Od"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  />
-                  <span className="text-gray-500">-</span>
-                  <input
-                    type="number"
-                    value={budzetDo}
-                    onChange={(e) => setBudzetDo(e.target.value)}
-                    placeholder="Do"
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              {/* PRAWA KOLUMNA: Pole tekstowe z opisem */}
+              <div className="bg-white p-8 rounded-2xl shadow-2xl border border-purple-100 space-y-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-4 border-b-2 border-purple-200 pb-2">
+                  ✍️ Szczegółowy Opis
+                </h3>
+                
+                <div>
+                  <textarea
+                    value={opisTekstowy}
+                    onChange={(e) => setOpisTekstowy(e.target.value)}
+                    rows={12}
+                    placeholder="Np. Szukam prezentu dla mojej mamy. Uwielbia gotować, czytać kryminały i pić dobrą kawę. Chciałbym coś praktycznego ale eleganckiego. Ma już masę książek więc raczej nie książka..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
                   />
                 </div>
+
+                {/* Informacja o opcjonalności */}
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-purple-500 p-4 rounded-lg">
+                  <p className="text-sm text-gray-700 leading-relaxed">
+                    <span className="font-semibold text-purple-700">💡 Wskazówka:</span> Po prostu opisz swoimi słowami jakiego prezentu szukasz i dla kogo. Im więcej szczegółów podasz w opisie tekstowym, tym bardziej dopasowane będą propozycje. Możesz opisać osobowość, hobby, to co osoba już ma, itp.
+                  </p>
+                </div>
+
               </div>
-              
-              {/* Przycisk wysłania */}
+            </div>
+            
+            {/* Przycisk wysłania */}
+            <div className="text-center">
               <button
                 type="submit"
                 disabled={ladowanie}
-                className="w-full bg-primary-600 text-white py-3 rounded-md font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-12 py-4 rounded-xl font-bold text-lg hover:shadow-2xl hover:shadow-purple-500/50 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {ladowanie ? 'Szukam...' : '🔍 Wyszukaj Prezenty'}
+                {ladowanie ? '🔄 Szukam...' : '🔍 Wyszukaj Prezenty'}
               </button>
-            </form>
-          )}
-          
-          {/* Formularz z opisem tekstowym */}
-          {aktywnyTab === 'opis' && (
-            <form onSubmit={obsluzWyslanieOpisu} className="space-y-6 bg-white p-8 rounded-lg shadow-md">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Opisz osobę, dla której szukasz prezentu lub jakiego prezentu potrzebujesz
-                </label>
-                <textarea
-                  value={opisTekstowy}
-                  onChange={(e) => setOpisTekstowy(e.target.value)}
-                  rows={6}
-                  placeholder="Np. Szukam prezentu dla mojej mamy na 60. urodziny. Uwielbia gotować, czytać kryminały i pić dobrą kawę. Budżet do 300 PLN..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                />
-              </div>
-              
-              <button
-                type="submit"
-                disabled={ladowanie}
-                className="w-full bg-primary-600 text-white py-3 rounded-md font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {ladowanie ? 'Szukam...' : '🔍 Wyszukaj Prezenty'}
-              </button>
-            </form>
-          )}
+            </div>
+          </form>
         </div>
       </Section>
       
@@ -532,10 +335,23 @@ export default function StronaGlowna() {
       {prezenty.length > 0 && !ladowanie && (
         <Section 
           id="wyniki"
-          tytul={`🎁 Znalazłem ${prezenty.length} ${prezenty.length === 1 ? 'prezent' : 'prezentów'} dla Ciebie!`}
+          tytul={`🎁 Znalazłem ${prezenty.length} ${prezenty.length === 1 ? 'prezent' : prezenty.length < 5 ? 'prezenty' : 'prezentów'} dla Ciebie!`}
           opis="Wybierz najlepszy prezent i dodaj do ulubionych"
         >
-          <div className="grid gap-6">
+          {/* Informacja o możliwości ponownego wyszukiwania */}
+          <div className="mb-8 bg-gradient-to-r from-yellow-50 to-orange-50 border-l-4 border-orange-400 p-6 rounded-lg shadow-md">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="w-6 h-6 text-orange-500 flex-shrink-0 mt-0.5" />
+              <div>
+                <p className="text-gray-800 font-medium leading-relaxed">
+                  <span className="text-orange-600 font-bold">💡 Wskazówka:</span> Jeżeli propozycje nie są satysfakcjonujące, kliknij <span className="font-bold">"Wyszukaj Inne"</span> poniżej lub <span className="font-bold">dopisz więcej szczegółów w polu tekstowym</span> i wyszukaj ponownie.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* GRID 2-KOLUMNOWY (responsive) */}
+          <div className="grid md:grid-cols-2 gap-6">
             {prezenty.map((prezent, index) => (
               <GiftCard
                 key={index}

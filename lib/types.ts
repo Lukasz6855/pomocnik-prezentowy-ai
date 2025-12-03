@@ -1,30 +1,35 @@
 // Typy danych używanych w aplikacji
 
+// Link do sklepu
+export interface ShopLink {
+  shop: string;              // Nazwa sklepu (Ceneo, Allegro, Empik, etc.)
+  url: string;               // URL do produktu/wyszukiwarki
+  isConcreteOffer: boolean;  // Czy to konkretna oferta (true) czy link do wyszukiwania (false)
+}
+
 // Typ dla pojedynczej propozycji prezentu
 export interface Prezent {
-  title: string;              // Nazwa prezentu
-  description: string;        // Opis prezentu
-  why: string;                // Dlaczego jest odpowiedni
-  price_estimate: string;     // Szacunkowa cena
-  affiliate_links: string[];  // Lista linków afiliacyjnych
-  imageUrl?: string;          // URL miniaturki zdjęcia produktu (opcjonalne)
+  title: string;                 // Nazwa prezentu
+  description: string;           // Opis prezentu
+  why: string;                   // Dlaczego jest odpowiedni
+  price_estimate: string;        // Szacunkowa cena
+  shop_links?: ShopLink[];       // Lista linków do sklepów (nowy format)
+  affiliate_links?: string[];    // Stary format (backward compatibility)
+  imageUrl?: string;             // URL miniaturki zdjęcia produktu (opcjonalne)
   
-  // Nowe pola dla integracji Allegro
-  source?: 'allegro' | 'other';  // Źródło oferty
-  shopName?: string;             // Nazwa sklepu (Allegro, Vistula, Reserved, etc.)
-  allegroId?: string;            // ID oferty z Allegro (jeśli source=allegro)
-  realImageUrl?: string;         // Prawdziwy URL obrazka (do proxowania)
+  // Pole źródła oferty
+  source?: 'ceneo' | 'allegro' | 'other';  // Źródło oferty
+  shopName?: string;                       // Nazwa sklepu (dla source='other')
+  ceneoId?: string;                        // ID produktu z Ceneo (jeśli source=ceneo)
+  allegroId?: string;                      // ID oferty z Allegro (jeśli source=allegro)
+  realImageUrl?: string;                   // Prawdziwy URL obrazka (do proxowania)
 }
 
 // Typ dla danych z formularza
 export interface DaneFormularza {
   okazja: string;                    // Okazja (urodziny, imieniny, itp.)
   plec: string;                      // Płeć (kobieta, mężczyzna, para)
-  relacja: string;                   // Relacja z osobą
-  wiek: string;                      // Wiek lub rocznica
-  zainteresowania: string[];         // Lista zainteresowań
-  stylPrezentu: string;              // Styl prezentu
-  formaPrezentu: string[];           // Forma prezentu (może być wiele)
+  wiek: string;                      // Wiek
   budzetOd: string;                  // Budżet od (PLN)
   budzetDo: string;                  // Budżet do (PLN)
 }
