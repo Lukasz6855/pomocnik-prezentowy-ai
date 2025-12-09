@@ -4,8 +4,8 @@ import remarkGfm from 'remark-gfm';
 
 // Metadata dla SEO
 export const metadata: Metadata = {
-  title: 'Polityka Prywatności',
-  description: 'Polityka prywatności serwisu Pomocnik Prezentowy AI - informacje o przetwarzaniu danych osobowych zgodnie z RODO.',
+  title: 'Polityka Prywatności - RODO | Prezenty AI',
+  description: 'Polityka prywatności serwisu Prezenty AI - informacje o przetwarzaniu danych osobowych zgodnie z RODO. Dowiedz się, jak chronimy Twoje dane.',
 };
 
 // Treść polityki prywatności (skopiowana z POLITYKA_PRYWATNOSCI.md)

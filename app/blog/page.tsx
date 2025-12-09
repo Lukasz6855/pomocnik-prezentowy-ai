@@ -7,9 +7,9 @@ import BlogClient from './BlogClient';
 
 // Metadane SEO dla strony bloga
 export const metadata: Metadata = {
-  title: 'Blog - Pomocnik Prezentowy AI | Porady i Inspiracje na Prezenty',
-  description: 'Odkryj najlepsze pomysły na prezenty, porady zakupowe i inspiracje dla każdej okazji. Artykuły ekspertów o prezentach na urodziny, święta i inne wyjątkowe chwile.',
-  keywords: ['blog prezentowy', 'pomysły na prezenty', 'porady zakupowe', 'inspiracje prezentowe'],
+  title: 'Blog Prezentowy - Porady i Inspiracje | Prezenty AI',
+  description: 'Odkryj najlepsze pomysły na prezenty, porady zakupowe i inspiracje dla każdej okazji. Artykuły o prezentach na urodziny, święta, rocznice i inne wyjątkowe chwile.',
+  keywords: ['blog prezentowy', 'pomysły na prezenty', 'porady zakupowe', 'inspiracje prezentowe', 'prezenty świąteczne', 'prezenty urodzinowe'],
 };
 
 // Server Component - pobiera artykuły z filesystem

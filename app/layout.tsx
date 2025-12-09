@@ -19,13 +19,13 @@ const poppins = Poppins({
 
 // Metadane strony (SEO)
 export const metadata: Metadata = {
-  metadataBase: new URL('https://pomocnikprezentowy.pl'),
+  metadataBase: new URL('https://prezentyai.pl'),
   title: {
-    default: 'Pomocnik Prezentowy AI - Znajdź Idealny Prezent w 30 Sekund',
-    template: '%s | Pomocnik Prezentowy AI',
+    default: 'Prezenty AI - Inteligentny Asystent Wyboru Prezentów | Znajdź Idealny Prezent',
+    template: '%s | Prezenty AI',
   },
-  description: 'Sztuczna inteligencja pomoże Ci wybrać najlepszy prezent dla każdej osoby i okazji. Spersonalizowane propozycje prezentów dopasowane do budżetu i zainteresowań.',
-  keywords: ['prezenty', 'AI', 'sztuczna inteligencja', 'pomysły na prezent', 'urodziny', 'święta', 'asystent prezentowy', 'rekomendacje prezentów', 'chatbot prezentowy'],
+  description: 'Wykorzystaj AI do znalezienia idealnego prezentu! Spersonalizowane rekomendacje prezentów na urodziny, święta i każdą okazję. Produkty z Ceneo dopasowane do budżetu i osoby obdarowanej.',
+  keywords: ['prezenty AI', 'asystent prezentowy', 'pomysły na prezent', 'prezenty urodzinowe', 'prezenty świąteczne', 'rekomendacje prezentów', 'inteligentny wybór prezentów', 'Ceneo prezenty', 'sztuczna inteligencja prezenty'],
   authors: [{ name: 'Pomocnik Prezentowy AI' }],
   creator: 'Pomocnik Prezentowy AI',
   publisher: 'Pomocnik Prezentowy AI',
@@ -43,10 +43,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'pl_PL',
-    url: 'https://pomocnikprezentowy.pl',
-    siteName: 'Pomocnik Prezentowy AI',
-    title: 'Pomocnik Prezentowy AI - Znajdź Idealny Prezent w 30 Sekund',
-    description: 'Sztuczna inteligencja pomoże Ci wybrać najlepszy prezent dla każdej osoby i okazji. Spersonalizowane propozycje prezentów dopasowane do budżetu i zainteresowań.',
+    url: 'https://prezentyai.pl',
+    siteName: 'Prezenty AI',
+    title: 'Prezenty AI - Inteligentny Asystent Wyboru Prezentów',
+    description: 'Wykorzystaj AI do znalezienia idealnego prezentu! Spersonalizowane rekomendacje produktów z Ceneo dopasowane do budżetu i osoby obdarowanej. Prezenty na urodziny, święta i każdą okazję.',
     images: [
       {
         url: '/opengraph-image',
@@ -58,8 +58,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pomocnik Prezentowy AI - Znajdź Idealny Prezent w 30 Sekund',
-    description: 'Sztuczna inteligencja pomoże Ci wybrać najlepszy prezent dla każdej osoby i okazji.',
+    title: 'Prezenty AI - Inteligentny Asystent Wyboru Prezentów',
+    description: 'Wykorzystaj AI do znalezienia idealnego prezentu! Spersonalizowane rekomendacje produktów z Ceneo.',
     images: ['/opengraph-image'],
   },
   verification: {

@@ -8,6 +8,7 @@ import Section from '@/components/Section';
 import HeroSection from '@/components/HeroSection';
 import { Prezent, DaneFormularza } from '@/lib/types';
 import { AlertCircle } from 'lucide-react';
+import { websiteSchema, organizationSchema } from '@/lib/schemaOrg';
 
 export default function StronaGlowna() {
   // Stan komponentu
@@ -150,7 +151,18 @@ export default function StronaGlowna() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <>
+      {/* Schema.org JSON-LD dla SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+      />
+
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-purple-50">
       {/* Hero Section */}
       <HeroSection />
       
@@ -444,5 +456,6 @@ export default function StronaGlowna() {
         </div>
       </Section>
     </div>
+    </>
   );
 }

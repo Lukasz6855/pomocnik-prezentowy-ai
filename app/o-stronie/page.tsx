@@ -1,8 +1,54 @@
 // Strona "O stronie" - informacje o aplikacji i ostrzeżenia
 import Section from '@/components/Section';
+import type { Metadata } from 'next';
+import { faqSchema, breadcrumbSchema } from '@/lib/schemaOrg';
+
+// Metadata SEO
+export const metadata: Metadata = {
+  title: 'O Serwisie - Jak Działa Prezenty AI',
+  description: 'Dowiedz się, jak działa Prezenty AI - inteligentny asystent wyboru prezentów. Poznaj technologię, politykę prywatności i ważne informacje o serwisie.',
+};
+
+// FAQ dla Schema.org
+const faqItems = [
+  {
+    question: 'Jak działa Prezenty AI?',
+    answer: 'Prezenty AI wykorzystuje sztuczną inteligencję do generowania spersonalizowanych propozycji prezentów. Podajesz okazję, płeć, wiek i budżet, a AI analizuje dane i proponuje produkty z Ceneo.',
+  },
+  {
+    question: 'Czy korzystanie z serwisu jest bezpłatne?',
+    answer: 'Tak, korzystanie z Prezenty AI jest całkowicie darmowe. Nie pobieramy żadnych opłat za generowanie rekomendacji prezentów.',
+  },
+  {
+    question: 'Skąd pochodzą produkty w rekomendacjach?',
+    answer: 'Wszystkie produkty pochodzą z serwisu Ceneo - największej polskiej porównywarki cen. Dzięki temu masz dostęp do szerokiego wyboru i aktualnych cen.',
+  },
+  {
+    question: 'Czy moje dane są bezpieczne?',
+    answer: 'Tak, przestrzegamy polityki prywatności zgodnej z RODO. Nie przechowujemy żadnych danych osobowych. Jedynie podstawowe informacje są wysyłane do AI w celu wygenerowania rekomendacji.',
+  },
+];
+
+// Breadcrumbs dla Schema.org
+const breadcrumbs = [
+  { name: 'Strona Główna', url: 'https://prezentyai.pl' },
+  { name: 'O Serwisie', url: 'https://prezentyai.pl/o-stronie' },
+];
 
 export default function StronaOStronie() {
   return (
+    <>
+      {/* Schema.org JSON-LD dla FAQ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(faqItems)) }}
+      />
+      {/* Schema.org JSON-LD dla Breadcrumbs */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema(breadcrumbs)) }}
+      />
+
     <div className="min-h-screen bg-gray-50">
       <Section 
         tytul="ℹ️ O Stronie"
@@ -160,5 +206,6 @@ export default function StronaOStronie() {
         </div>
       </Section>
     </div>
+    </>
   );
 }

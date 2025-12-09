@@ -9,6 +9,7 @@ import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { getArticleBySlug, getAllArticles } from '@/lib/articlesLoader';
+import { getRelatedArticles } from '@/lib/articleUtils';
 import { Calendar, Tag, Home, ChevronRight, User } from 'lucide-react';
 
 // Generowanie metadanych SEO dla każdego artykułu dynamicznie
@@ -66,6 +67,12 @@ export default function ArticlePage({
   if (!article) {
     notFound();
   }
+
+  // Pobierz wszystkie artykuły dla powiązanych
+  const allArticles = getAllArticles();
+  
+  // Znajdź powiązane artykuły (max 3)
+  const relatedArticles = getRelatedArticles(article, allArticles, 3);
 
   // Formatowanie daty do polskiego formatu
   const formattedDate = new Date(article.date).toLocaleDateString('pl-PL', {
@@ -265,6 +272,57 @@ export default function ArticlePage({
                 ))}
               </div>
             </footer>
+          )}
+
+          {/* Sekcja: Powiązane artykuły */}
+          {relatedArticles.length > 0 && (
+            <div className="mt-12 pt-8 border-t border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6 font-poppins">
+                📖 Powiązane artykuły
+              </h2>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                {relatedArticles.map((related) => (
+                  <Link
+                    key={related.slug}
+                    href={`/blog/${related.slug}`}
+                    className="group block bg-white rounded-lg shadow-md hover:shadow-xl transition-all overflow-hidden"
+                  >
+                    {/* Miniaturka */}
+                    {related.thumbnail && (
+                      <div className="relative h-40 overflow-hidden">
+                        <Image
+                          src={related.thumbnail}
+                          alt={related.title}
+                          fill
+                          className="object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Treść karty */}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-purple-600 transition-colors line-clamp-2">
+                        {related.title}
+                      </h3>
+                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">
+                        {related.excerpt}
+                      </p>
+                      
+                      {/* Data */}
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="w-3 h-3 mr-1" />
+                        {new Date(related.date).toLocaleDateString('pl-PL', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
           )}
 
           {/* Przycisk powrotu do bloga */}
