@@ -24,9 +24,7 @@ export function getAllArticles(): Article[] {
 
     // Pobierz wszystkie pliki JSON z folderu
     const fileNames = fs.readdirSync(articlesDirectory);
-    console.log('📁 Wszystkie pliki w /articles:', fileNames);
     const jsonFiles = fileNames.filter(name => name.endsWith('.json'));
-    console.log('📄 Pliki JSON:', jsonFiles);
 
     // Wczytaj każdy plik i sparsuj JSON
     const articles: Article[] = jsonFiles.map(fileName => {
@@ -36,8 +34,6 @@ export function getAllArticles(): Article[] {
       
       return article;
     });
-
-    console.log(`✅ Załadowano ${articles.length} artykułów:`, articles.map(a => a.slug));
 
     // Sortuj po dacie (najnowsze na górze)
     articles.sort((a, b) => {
