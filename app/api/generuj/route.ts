@@ -109,14 +109,19 @@ export async function POST(request: NextRequest) {
             
             console.log(`  🔎 Szukam "${searchQuery}"...`);
             
-            const products = await searchProducts(searchQuery, {
-              lowestPrice: budzetOd > 0 ? budzetOd : undefined,
+            // Ceneo API nie wspiera lowestPrice, więc pobieramy więcej produktów i filtrujemy
+            const allProducts = await searchProducts(searchQuery, {
               highestPrice: budzetDo,
-              pageSize: 1, // Weź tylko najlepszy produkt
+              pageSize: 10, // Pobierz więcej produktów do filtrowania
             });
             
-            if (products.length > 0) {
-              const product = products[0];
+            // Filtruj produkty po minimalnej cenie (jeśli ustawiona)
+            const filteredProducts = budzetOd > 0 
+              ? allProducts.filter(p => p.LowestPrice >= budzetOd)
+              : allProducts;
+            
+            if (filteredProducts.length > 0) {
+              const product = filteredProducts[0];
               const affiliateUrl = `${product.Url}#pid=${process.env.CENEO_PARTNER_ID}`;
               
               prezenty.push({
