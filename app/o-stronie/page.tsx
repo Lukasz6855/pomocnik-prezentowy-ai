@@ -158,15 +158,6 @@ export default function StronaOStronie() {
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <span className="text-2xl">✨</span>
-              <div>
-                <h4 className="font-semibold">Losuj prezent</h4>
-                <p className="text-sm text-gray-600">
-                  Kreatywne, popularne propozycje bez formularza
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start space-x-3">
               <span className="text-2xl">❤️</span>
               <div>
                 <h4 className="font-semibold">Ulubione</h4>

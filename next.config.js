@@ -1,6 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  
+  // Optymalizacja wydajności
+  swcMinify: true,
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // Wyłączenie source maps w development (przyspieszenie)
+  productionBrowserSourceMaps: false,
+  
   // Konfiguracja obrazków - dozwolone domeny zewnętrzne
   images: {
     remotePatterns: [

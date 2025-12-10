@@ -30,11 +30,20 @@ export async function POST(request: NextRequest) {
       searchPhrase = `prezent ${formData.okazja} ${formData.plec}`;
     } else if (typ === 'opis') {
       searchPhrase = dane.opis || '';
-      // Ekstrakcja budżetu z opisu (jeśli jest)
-      const budgetMatch = dane.opis.match(/(\d+)\s*-\s*(\d+)\s*zł/i);
-      if (budgetMatch) {
-        budzetOd = parseInt(budgetMatch[1]);
-        budzetDo = parseInt(budgetMatch[2]);
+      // Użyj budżetu z dane jeśli został przekazany z formularza
+      if (dane.budzetOd !== undefined) {
+        budzetOd = parseFloat(dane.budzetOd) || 0;
+      }
+      if (dane.budzetDo !== undefined) {
+        budzetDo = parseFloat(dane.budzetDo) || 10000;
+      }
+      // Ekstrakcja budżetu z opisu (jeśli nie ma z formularza)
+      if (budzetOd === 0 && budzetDo === 10000) {
+        const budgetMatch = dane.opis.match(/(\d+)\s*-\s*(\d+)\s*zł/i);
+        if (budgetMatch) {
+          budzetOd = parseInt(budgetMatch[1]);
+          budzetDo = parseInt(budgetMatch[2]);
+        }
       }
     } else if (typ === 'losowy') {
       searchPhrase = 'prezent';
@@ -101,6 +110,7 @@ export async function POST(request: NextRequest) {
             console.log(`  🔎 Szukam "${searchQuery}"...`);
             
             const products = await searchProducts(searchQuery, {
+              lowestPrice: budzetOd > 0 ? budzetOd : undefined,
               highestPrice: budzetDo,
               pageSize: 1, // Weź tylko najlepszy produkt
             });
@@ -212,18 +222,20 @@ ZADANIE:
 Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty pasujących do opisu.
 
 KRYTYCZNIE WAŻNE:
-1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo (np. "książka fantasy", "zestaw kosmetyków", "plecak turystyczny")
+1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo
 2. Różnorodność - NIE powtarzaj podobnych kategorii
-3. Dopasuj do budżetu ${budzetOd}-${budzetDo} PLN
-4. Dopasuj propozycje do opisu użytkownika
+3. WSZYSTKIE produkty MUSZĄ mieścić się w budżecie ${budzetOd}-${budzetDo} PLN
+4. Dopasuj propozycje do WIEKU, PŁCI i KONTEKSTU z opisu użytkownika
+5. Jeśli opis wspomina wiek/płeć - BEZWZGLĘDNIE się do tego dostosuj
+6. NIE proponuj prezentów dla dzieci gdy opis wskazuje na dorosłą osobę!
 
 Format odpowiedzi JSON:
 {
   "prezenty": [
     {
       "searchQuery": "konkretna fraza do wyszukania w Ceneo (np. 'perfumy męskie hugo boss')",
-      "description": "Dlaczego pasuje do opisanej osoby (2-3 zdania)",
-      "why": "Uzasadnienie wyboru (1-2 zdania)"
+      "description": "Dlaczego pasuje do opisanej osoby (uwzględnij wiek, płeć, kontekst)",
+      "why": "Uzasadnienie wyboru"
     }
   ]
 }
@@ -232,29 +244,39 @@ Zwróć 10-12 RÓŻNYCH pomysłów z RÓŻNYCH kategorii produktów.`;
 }
 
 function buildPromptForForm(formData: any): string {
+  const wiekInfo = formData.wiek ? `${formData.wiek} lat` : 'dorosła osoba';
+  const plecInfo = formData.plec === 'kobieta' ? 'dla kobiety' : formData.plec === 'mężczyzna' ? 'dla mężczyzny' : 'dla osoby';
+  
   return `Jesteś ekspertem w doborze prezentów. Użytkownik wypełnił formularz:
 
 Okazja: ${formData.okazja}
-Płeć: ${formData.plec}
-Wiek: ${formData.wiek}
+Płeć odbiorcy: ${formData.plec}
+Wiek: ${wiekInfo}
 Budżet: ${formData.budzetOd} - ${formData.budzetDo} PLN
 
 ZADANIE:
-Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty. Każdy pomysł powinien być z INNEJ kategorii.
+Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty ${plecInfo} w wieku ${wiekInfo}.
 
 KRYTYCZNIE WAŻNE:
-1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo (np. "słuchawki bezprzewodowe", "smartwatch", "zestaw pędzli do makijażu")
-2. Różnorodność - NIE powtarzaj podobnych kategorii (np. jeśli jest "smartwatch", to nie dodawaj "opaska fitness")
-3. Dopasuj do budżetu ${formData.budzetOd}-${formData.budzetDo} PLN
-4. Uwzględnij kontekst: okazja, płeć, wiek
+1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo
+2. Różnorodność - NIE powtarzaj podobnych kategorii
+3. WSZYSTKIE produkty MUSZĄ mieścić się w budżecie ${formData.budzetOd}-${formData.budzetDo} PLN
+4. Dopasuj do WIEKU (${wiekInfo}) i PŁCI (${formData.plec})
+5. NIE proponuj prezentów dla dzieci gdy odbiorca to dorosły!
+6. Uwzględnij okazję: ${formData.okazja}
+
+Przykłady ZŁYCH propozycji (NIE rób tego):
+- Klocki LEGO dla dzieci 5+ gdy odbiorca ma ${formData.wiek || 30} lat
+- Lalki/zabawki gdy to dorosła osoba
+- Produkty poza budżetem ${formData.budzetOd}-${formData.budzetDo} PLN
 
 Format odpowiedzi JSON:
 {
   "prezenty": [
     {
-      "searchQuery": "konkretna fraza do wyszukania w Ceneo (np. 'słuchawki bluetooth JBL')",
-      "description": "Dlaczego to pasuje do odbiorcy (2-3 zdania, uwzględnij okazję)",
-      "why": "Uzasadnienie wyboru (1-2 zdania)"
+      "searchQuery": "konkretna fraza do wyszukania w Ceneo (np. 'perfumy damskie', 'smartwatch męski', 'książka thriller')",
+      "description": "Dlaczego to pasuje do odbiorcy (uwzględnij wiek, płeć, okazję)",
+      "why": "Uzasadnienie wyboru"
     }
   ]
 }

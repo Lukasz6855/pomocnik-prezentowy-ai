@@ -9,6 +9,11 @@ export default function HeroSection() {
     element?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToJakToDziala = () => {
+    const element = document.getElementById('jak-to-dziala');
+    element?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-purple-600 via-pink-500 to-purple-700 text-white">
       {/* Obrazek tła z Unsplash - prezenty/święta */}
@@ -60,7 +65,7 @@ export default function HeroSection() {
             </button>
             
             <button
-              onClick={scrollToForm}
+              onClick={scrollToJakToDziala}
               className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-300"
             >
               Zobacz jak to działa

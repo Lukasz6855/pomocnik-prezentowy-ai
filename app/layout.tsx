@@ -21,7 +21,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL('https://prezentyai.pl'),
   title: {
-    default: 'Prezenty AI - Inteligentny Asystent Wyboru Prezentów | Znajdź Idealny Prezent',
+    default: 'Wyszukiwarka prezentów AI - Inteligentny Asystent Wyboru Prezentów | Znajdź Idealny Prezent',
     template: '%s | Prezenty AI',
   },
   description: 'Wykorzystaj AI do znalezienia idealnego prezentu! Spersonalizowane rekomendacje prezentów na urodziny, święta i każdą okazję. Produkty z Ceneo dopasowane do budżetu i osoby obdarowanej.',

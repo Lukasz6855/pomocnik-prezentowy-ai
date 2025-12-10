@@ -1,7 +1,7 @@
 // Główna strona aplikacji - strona główna z formularzem i wyszukiwarką
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import GiftCard from '@/components/GiftCard';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Section from '@/components/Section';
@@ -27,11 +27,39 @@ export default function StronaGlowna() {
   // Stan opisu tekstowego (teraz zawsze widoczny obok formularza)
   const [opisTekstowy, setOpisTekstowy] = useState('');
   
+  // Przywracanie wyników z sessionStorage po powrocie z innej karty (mobile fix)
+  useEffect(() => {
+    const savedResults = sessionStorage.getItem('searchResults');
+    const savedFormData = sessionStorage.getItem('searchFormData');
+    
+    if (savedResults) {
+      try {
+        const parsedResults = JSON.parse(savedResults);
+        setPrezenty(parsedResults);
+        
+        // Przywróć również stan formularza
+        if (savedFormData) {
+          const formData = JSON.parse(savedFormData);
+          setOkazja(formData.okazja || 'urodziny');
+          setOkazjaInna(formData.okazjaInna || '');
+          setPlec(formData.plec || 'kobieta');
+          setWiek(formData.wiek || '');
+          setBudzetOd(formData.budzetOd || '');
+          setBudzetDo(formData.budzetDo || '');
+          setOpisTekstowy(formData.opisTekstowy || '');
+        }
+      } catch (e) {
+        console.error('Błąd przy odczytywaniu zapisanych wyników:', e);
+      }
+    }
+  }, []);
+  
   // Funkcja wysyłająca zapytanie do API (UPROSZCZONA - tylko formularz + opis)
   const wyslijZapytanie = async (dane: any) => {
     setLadowanie(true); // Włączenie loadera
     setKomunikatBledu(null); // Wyczyszczenie błędów
     setPrezenty([]); // Wyczyszczenie poprzednich wyników
+    sessionStorage.removeItem('searchResults'); // Wyczyść poprzednie wyniki przy nowym wyszukiwaniu
     
     try {
       // Wysłanie żądania POST do API
@@ -55,6 +83,9 @@ export default function StronaGlowna() {
       // Ustawienie prezentów w stanie
       if (wynik.success && wynik.prezenty) {
         setPrezenty(wynik.prezenty);
+        
+        // Zapisz wyniki w sessionStorage (dla mobile - zachowanie przy powrocie z innej karty)
+        sessionStorage.setItem('searchResults', JSON.stringify(wynik.prezenty));
         
         // Przewinięcie do wyników
         setTimeout(() => {
@@ -94,12 +125,14 @@ export default function StronaGlowna() {
       budzetDo: budzetDo
     };
     
-    // Jeśli jest opis tekstowy, użyj trybu 'opis', jeśli nie - 'formularz'
+    // Jeśli jest opis tekstowy, użyj trybu 'opis' + przekaż budżet z formularza
     if (opisTekstowy.trim()) {
       wyslijZapytanie({
         typ: 'opis',
         dane: {
-          opis: `${opisTekstowy}\n\nDodatkowe info z formularza: Okazja: ${daneFormularza.okazja}, Płeć: ${plec}, Wiek: ${wiek || 'nieokreślony'}, Budżet: ${budzetOd || '0'}-${budzetDo} PLN`
+          opis: `${opisTekstowy}\n\nDodatkowe info z formularza: Okazja: ${daneFormularza.okazja}, Płeć: ${plec}, Wiek: ${wiek || 'nieokreślony'}, Budżet: ${budzetOd || '0'}-${budzetDo} PLN`,
+          budzetOd: budzetOd,
+          budzetDo: budzetDo
         }
       });
     } else {
@@ -394,6 +427,7 @@ export default function StronaGlowna() {
       <Section 
         tytul="Jak to działa?"
         tloCiemne
+        id="jak-to-dziala"
       >
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center">
