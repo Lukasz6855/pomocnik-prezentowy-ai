@@ -93,6 +93,9 @@ export async function POST(request: NextRequest) {
       
       console.log(`🤖 AI wygenerowało ${aiIdeas.length} pomysłów`);
       
+      // Sprawdź wiek użytkownika dla filtrowania
+      const wiekUzytkownika = typ === 'formularz' ? parseInt(dane.wiek) || 30 : null;
+      
       // KROK 6: Dla każdego pomysłu AI szukamy w Ceneo
       if (process.env.CENEO_API_KEY) {
         console.log('🛒 Wyszukiwanie produktów w Ceneo dla pomysłów AI...');
@@ -107,6 +110,24 @@ export async function POST(request: NextRequest) {
               continue;
             }
             
+            // Filtr: odrzuć produkty dla dzieci gdy użytkownik jest dorosły
+            if (wiekUzytkownika && wiekUzytkownika >= 18) {
+              const searchLower = searchQuery.toLowerCase();
+              const zakazaneSlowa = [
+                'dla dzieci', 'dziecięcy', 'dziecięca', 'dziecka', 
+                'maluch', 'niemowlę', 'zabawka', 'edukacyjny zestaw',
+                'drewniany zestaw dla dzieci', 'plastikowy zestaw',
+                '3+', '4+', '5+', '6+', '7+', '8+', 'lat+'
+              ];
+              
+              const jestDlaDzieci = zakazaneSlowa.some(slowo => searchLower.includes(slowo));
+              
+              if (jestDlaDzieci) {
+                console.log(`  ⛔ ODRZUCONO (produkt dla dzieci dla dorosłego): "${searchQuery}"`);
+                continue;
+              }
+            }
+            
             console.log(`  🔎 Szukam "${searchQuery}"...`);
             
             // Ceneo API nie wspiera lowestPrice, więc pobieramy więcej produktów i filtrujemy
@@ -116,9 +137,31 @@ export async function POST(request: NextRequest) {
             });
             
             // Filtruj produkty po minimalnej cenie (jeśli ustawiona)
-            const filteredProducts = budzetOd > 0 
+            let filteredProducts = budzetOd > 0 
               ? allProducts.filter(p => p.LowestPrice >= budzetOd)
               : allProducts;
+            
+            // Dodatkowy filtr: usuń produkty dla dzieci gdy użytkownik jest dorosły
+            if (wiekUzytkownika && wiekUzytkownika >= 18) {
+              filteredProducts = filteredProducts.filter(product => {
+                const nameLower = product.Name.toLowerCase();
+                const zakazaneFrazy = [
+                  'dla dzieci', 'dziecięcy', 'dziecięca', 'dzieciece',
+                  'dla maluszka', 'dla niemowląt', 'zabawka',
+                  ' 3+', ' 4+', ' 5+', ' 6+', ' 7+', ' 8+', 'lat+',
+                  'edukacyjny dla dzieci', 'serwis dla dzieci'
+                ];
+                
+                const jestDlaDzieci = zakazaneFrazy.some(fraza => nameLower.includes(fraza));
+                
+                if (jestDlaDzieci) {
+                  console.log(`    ⛔ Pominięto produkt dla dzieci: "${product.Name}"`);
+                  return false;
+                }
+                
+                return true;
+              });
+            }
             
             if (filteredProducts.length > 0) {
               const product = filteredProducts[0];
@@ -217,11 +260,30 @@ Zwróć 10-12 RÓŻNYCH pomysłów z RÓŻNYCH kategorii produktów.`;
 }
 
 function buildPromptForDescription(opis: string, budzetOd: number, budzetDo: number): string {
+  // Analiza opisu pod kątem wieku
+  const agePattern = /(\d+)\s*(lat|lata|rok|lat\s+)/i;
+  const ageMatch = opis.match(agePattern);
+  const wiek = ageMatch ? parseInt(ageMatch[1]) : null;
+  
+  let wiekWarning = '';
+  if (wiek !== null) {
+    if (wiek >= 18) {
+      wiekWarning = `\n\n🚨 UWAGA - WIEK: Osoba ma ${wiek} lat, czyli jest DOROSŁA!
+- ABSOLUTNIE ZAKAZANE: zabawki dla dzieci`;
+    } else if (wiek < 13) {
+      wiekWarning = `\n\n🚨 UWAGA - WIEK: Osoba ma ${wiek} lat, czyli jest DZIECKIEM!
+- Proponuj zabawki, gry, książki, odpowiednie dla wieku ${wiek} lat`;
+    } else {
+      wiekWarning = `\n\n🚨 UWAGA - WIEK: Osoba ma ${wiek} lat, czyli jest NASTOLATKIEM!
+- Proponuj produkty dla młodzieży`;
+    }
+  }
+  
   return `Jesteś ekspertem w doborze prezentów. Użytkownik opisał osobę/sytuację:
 
 "${opis}"
 
-Budżet: ${budzetOd}-${budzetDo} PLN
+Budżet: ${budzetOd}-${budzetDo} PLN${wiekWarning}
 
 ZADANIE:
 Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty pasujących do opisu.
@@ -232,7 +294,7 @@ KRYTYCZNIE WAŻNE:
 3. WSZYSTKIE produkty MUSZĄ mieścić się w budżecie ${budzetOd}-${budzetDo} PLN
 4. Dopasuj propozycje do WIEKU, PŁCI i KONTEKSTU z opisu użytkownika
 5. Jeśli opis wspomina wiek/płeć - BEZWZGLĘDNIE się do tego dostosuj
-6. NIE proponuj prezentów dla dzieci gdy opis wskazuje na dorosłą osobę!
+6. NIE proponuj prezentów dla dzieci gdy opis i wiek wskazuje na dorosłą osobę!
 
 Format odpowiedzi JSON:
 {
@@ -252,15 +314,38 @@ function buildPromptForForm(formData: any): string {
   const wiekInfo = formData.wiek ? `${formData.wiek} lat` : 'dorosła osoba';
   const plecInfo = formData.plec === 'kobieta' ? 'dla kobiety' : formData.plec === 'mężczyzna' ? 'dla mężczyzny' : 'dla osoby';
   
+  // Określ grupę wiekową
+  const wiek = parseInt(formData.wiek) || 30;
+  let grupaWiekowa = '';
+  if (wiek < 13) {
+    grupaWiekowa = 'DZIECKO (0-12 lat)';
+  } else if (wiek < 18) {
+    grupaWiekowa = 'NASTOLATEK (13-17 lat)';
+  } else if (wiek < 30) {
+    grupaWiekowa = 'MŁODY DOROSŁY (18-29 lat)';
+  } else if (wiek < 50) {
+    grupaWiekowa = 'DOROSŁY (30-49 lat)';
+  } else {
+    grupaWiekowa = 'SENIOR (50+ lat)';
+  }
+  
   return `Jesteś ekspertem w doborze prezentów. Użytkownik wypełnił formularz:
 
 Okazja: ${formData.okazja}
 Płeć odbiorcy: ${formData.plec}
-Wiek: ${wiekInfo}
+Wiek: ${wiekInfo} → ${grupaWiekowa}
 Budżet: ${formData.budzetOd} - ${formData.budzetDo} PLN
 
 ZADANIE:
 Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty ${plecInfo} w wieku ${wiekInfo}.
+
+🚨 ABSOLUTNIE KRYTYCZNE - WIEK:
+- Odbiorca ma ${wiekInfo} (grupa: ${grupaWiekowa})
+${wiek >= 18 ? `- To DOROSŁA osoba - NIE PROPONUJ zabawek, zestawów dla dzieci, gier planszowych dla dzieci
+- ZAKAZANE: serwisy do herbaty dla dzieci, zabawki drewniane, zabawki, klocki dla małych dzieci, pluszaki, kolorowanki
+` : ''}
+${wiek < 13 ? `- To DZIECKO - proponuj zabawki, gry, książki dla dzieci odpowiednie dla wieku ${wiekInfo}` : ''}
+${wiek >= 13 && wiek < 18 ? `- To NASTOLATEK - proponuj gry, elektronikę, sport, modę młodzieżową itp.` : ''}
 
 KRYTYCZNIE WAŻNE:
 1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo
