@@ -59,8 +59,8 @@ export function generujLinkiAfiliacyjne(nazwaProduktu: string): string[] {
         // Format: allegro.pl/listing?string=[query]
         return `https://allegro.pl/listing?string=${zakodowanaNazwa}`;
       case 'Ceneo':
-        // Format: ceneo.pl/;szukaj-[query]
-        return `https://ceneo.pl/;szukaj-${zakodowanaNazwa}`;
+        // Format: ceneo.pl/;szukaj-[query]#pid=[PARTNER_ID]
+        return `https://www.ceneo.pl/;szukaj-${zakodowanaNazwa}#pid=30364`;
       case 'Empik':
         // Format: empik.com/szukaj/produkt?q=[query]
         return `https://empik.com/szukaj/produkt?q=${zakodowanaNazwa}`;
@@ -105,7 +105,7 @@ export function generujPorownanieCen(nazwaProduktu: string) {
     {
       sklep: 'Ceneo',
       cena: `${cenaBazowa + Math.floor(Math.random() * 30 - 15)} PLN`,
-      linkAfiliacyjny: `https://ceneo.pl/;szukaj-${zakodowanaNazwa}`
+      linkAfiliacyjny: `https://www.ceneo.pl/;szukaj-${zakodowanaNazwa}#pid=30364`
     },
     {
       sklep: 'Amazon.pl',
