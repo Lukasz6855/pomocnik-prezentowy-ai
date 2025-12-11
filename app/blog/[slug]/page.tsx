@@ -325,8 +325,24 @@ export default function ArticlePage({
             </div>
           )}
 
+          {/* CTA - Asystent AI */}
+          <div className="mt-12 p-8 bg-gradient-to-r from-purple-100 via-pink-100 to-purple-100 rounded-xl shadow-lg text-center">
+            <h3 className="text-2xl font-bold text-gray-900 mb-3 font-poppins">
+              🎁 Potrzebujesz więcej inspiracji?
+            </h3>
+            <p className="text-gray-700 mb-6">
+              Skorzystaj z naszego <strong>Asystenta AI</strong> na stronie głównej, aby znaleźć idealnie dopasowany prezent!
+            </p>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-600 transition-all shadow-md hover:shadow-lg"
+            >
+              Przejdź do Asystenta AI
+            </Link>
+          </div>
+
           {/* Przycisk powrotu do bloga */}
-          <div className="mt-12 text-center">
+          <div className="mt-8 text-center">
             <Link
               href="/blog"
               className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-pink-600 transition-all shadow-md hover:shadow-lg"
