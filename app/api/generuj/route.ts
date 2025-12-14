@@ -329,6 +329,57 @@ function buildPromptForForm(formData: any): string {
     grupaWiekowa = 'SENIOR (50+ lat)';
   }
   
+  // Specjalne instrukcje dla konkretnych okazji
+  let okazjaInstrukcje = '';
+  const okazja = formData.okazja?.toLowerCase() || '';
+  
+  if (okazja.includes('chrzest')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: CHRZEST
+- To uroczystość religijna - prezent powinien być pamiątkowy i symboliczny
+- PRIORYTETOWE kategorie, przykłady: srebrne łyżeczki grawerowane, medaliki z Aniołkiem/Matką Boską, ramki na zdjęcia z grawerem, skarbonki srebrne, obrazki religijne w ramkach, albumy na zdjęcia z chrztu, pamiątkowe pudełka, srebrne kubeczki
+- Dopuszczalne: praktyczne rzeczy dla niemowląt (pościel, kocyki, ubranka), książki religijne dla dzieci
+- ZAKAZANE: zegarki, kosmetyki, biżuteria nie związana z okazją, elektronika, zabawki zwykłe
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('komunia') || okazja.includes('bierzmowanie')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- To uroczystość religijna
+- PRIORYTETOWE: zegarki grawerowane, biżuteria z symbolami religijnymi, portfele skórzane, książki religijne, pamiątki religijne, zestawy piśmiennicze eleganckie
+- Dopuszczalne: elektronika (jeśli w budżecie), gry planszowe rodzinne, rowery
+- ZAKAZANE: alkohol, papierosy, prezenty infantylne
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('ślub') || okazja.includes('wesele')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- Prezent dla pary młodej
+- PRIORYTETOWE: zestawy do domu (naczynia, garnki, pościel), dekoracje wnętrz, ramki na zdjęcia, kosz wiklinowy na prezenty, vouchery na wyjazd/kolację, sprzęt AGD
+- Dopuszczalne: gotówka w eleganckim opakowaniu, albumy na zdjęcia ślubne
+- Uniwersalne: zestaw kieliszków do wina, serwis kawowy
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('rocznica')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- Prezent romantyczny i osobisty
+- PRIORYTETOWE: biżuteria, perfumy, zegarki, kolacja/wyjazd we dwoje, personalizowane prezenty z grawerem (ramki ze zdjęciem, albumy)
+- Dopuszczalne: kwiaty premium, ekskluzywne alkohole, spa dla par
+- Skupienie: elegancja i romantyzm
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('urodziny')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- Uniwersalna okazja - dopasuj do zainteresowań i wieku
+- Pełna swoboda w doborze kategorii (elektronika, książki, sport, moda, hobby)
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('imieniny')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- Prezent może być bardziej symboliczny niż na urodziny
+- PRIORYTETOWE: kwiaty, czekoladki premium, drobne upominki osobiste
+- Dopuszczalne: książki, kosmetyki, dekoracje
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  } else if (okazja.includes('święta') || okazja.includes('boże narodzenie')) {
+    okazjaInstrukcje = `\n\n🎯 OKAZJA: ${formData.okazja.toUpperCase()}
+- Świąteczna atmosfera
+- PRIORYTETOWE: ciepłe ubrania (swetry, szaliki), kosmetyki w zestawach, książki, zestawy herbat/kaw premium
+- Dopuszczalne: elektronika, gry planszowe, dekoracje świąteczne
+Podałem tylko przykłady, abyś wiedział o co chodzi, nie musisz sie ograniczać jedynie do tych rzeczy wymienionych w instrukcji.`;
+  }
+  
   return `Jesteś ekspertem w doborze prezentów. Użytkownik wypełnił formularz:
 
 Okazja: ${formData.okazja}
@@ -339,37 +390,43 @@ Budżet: ${formData.budzetOd} - ${formData.budzetDo} PLN
 ZADANIE:
 Wygeneruj 10-12 RÓŻNORODNYCH pomysłów na prezenty ${plecInfo} w wieku ${wiekInfo}.
 
-🚨 ABSOLUTNIE KRYTYCZNE - WIEK:
+🚨 ABSOLUTNIE KRYTYCZNE - WIEK I PŁEĆ:
 - Odbiorca ma ${wiekInfo} (grupa: ${grupaWiekowa})
+- Płeć: ${formData.plec} - ZAWSZE proponuj prezenty odpowiednie dla tej płci
 ${wiek >= 18 ? `- To DOROSŁA osoba - NIE PROPONUJ zabawek, zestawów dla dzieci, gier planszowych dla dzieci
 - ZAKAZANE: serwisy do herbaty dla dzieci, zabawki drewniane, zabawki, klocki dla małych dzieci, pluszaki, kolorowanki
 ` : ''}
 ${wiek < 13 ? `- To DZIECKO - proponuj zabawki, gry, książki dla dzieci odpowiednie dla wieku ${wiekInfo}` : ''}
 ${wiek >= 13 && wiek < 18 ? `- To NASTOLATEK - proponuj gry, elektronikę, sport, modę młodzieżową itp.` : ''}
+${formData.plec === 'kobieta' ? `- To KOBIETA - NIE proponuj męskich produktów (zegarki męskie, kosmetyki męskie, bransoletki męskie, wody toaletowe męskie)` : ''}
+${formData.plec === 'mężczyzna' ? `- To MĘŻCZYZNA - NIE proponuj damskich produktów (perfumy damskie, kosmetyki damskie, biżuteria damska, torebki damskie)` : ''}
+${okazjaInstrukcje}
 
-KRYTYCZNIE WAŻNE:
+KRYTYCZNIE WAŻNE - DOPASOWANIE DO FORMULARZA:
 1. Każdy pomysł musi mieć KONKRETNĄ nazwę produktu do wyszukania w Ceneo
-2. Różnorodność - NIE powtarzaj podobnych kategorii
-3. WSZYSTKIE produkty MUSZĄ mieścić się w budżecie ${formData.budzetOd}-${formData.budzetDo} PLN
-4. Dopasuj do WIEKU (${wiekInfo}) i PŁCI (${formData.plec})
-5. NIE proponuj prezentów dla dzieci gdy odbiorca to dorosły!
-6. Uwzględnij okazję: ${formData.okazja}
+2. WSZYSTKIE produkty MUSZĄ odpowiadać OKAZJI: ${formData.okazja}
+3. WSZYSTKIE produkty MUSZĄ być odpowiednie dla PŁCI: ${formData.plec}
+4. WSZYSTKIE produkty MUSZĄ odpowiadać WIEKOWI: ${wiekInfo}
+5. WSZYSTKIE produkty MUSZĄ mieścić się w budżecie ${formData.budzetOd}-${formData.budzetDo} PLN
+6. Różnorodność - NIE powtarzaj podobnych kategorii
 
-Przykłady ZŁYCH propozycji (NIE rób tego):
+Przykłady ZŁYCH propozycji (ABSOLUTNIE ZAKAZANE):
+- Zegarek męski dla kobiety / Perfumy damskie dla mężczyzny
 - Klocki LEGO dla dzieci 5+ gdy odbiorca ma ${formData.wiek || 30} lat
-- Lalki/zabawki gdy to dorosła osoba
+- Zabawki/lalki gdy to dorosła osoba
 - Produkty poza budżetem ${formData.budzetOd}-${formData.budzetDo} PLN
+- Kosmetyki/zegarki na chrzest (tylko pamiątki religijne!)
 
 Format odpowiedzi JSON:
 {
   "prezenty": [
     {
-      "searchQuery": "konkretna fraza do wyszukania w Ceneo (np. 'perfumy damskie', 'smartwatch męski', 'książka thriller')",
-      "description": "Dlaczego to pasuje do odbiorcy (uwzględnij wiek, płeć, okazję)",
-      "why": "Uzasadnienie wyboru"
+      "searchQuery": "konkretna fraza do wyszukania w Ceneo (np. 'srebrna łyżeczka chrzest grawer', 'medalik aniołek srebro', 'ramka na zdjęcie chrzest')",
+      "description": "Dlaczego to pasuje do odbiorcy i okazji (uwzględnij WIEK, PŁEĆ, OKAZJĘ)",
+      "why": "Uzasadnienie wyboru względem formularza"
     }
   ]
 }
 
-Zwróć 10-12 RÓŻNYCH pomysłów z RÓŻNYCH kategorii produktów.`;
+Zwróć 10-12 RÓŻNYCH pomysłów z RÓŻNYCH kategorii produktów ZAWSZE DOPASOWANYCH DO FORMULARZA.`;
 }
