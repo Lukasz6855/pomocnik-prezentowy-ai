@@ -157,7 +157,9 @@ export async function searchProducts(
   const params: string[] = [];
   
   // searchtext - MUSI być w cudzysłowach (OData string literal)
-  params.push(`searchtext='${encodeURIComponent(searchText)}'`);
+  // Usuwamy apostrofy z frazy - zagnieżdżone ' w OData łamią składnię query
+  const safeSearchText = searchText.replace(/'/g, '');
+  params.push(`searchtext='${encodeURIComponent(safeSearchText)}'`);
   
   if (options?.categoryId) {
     params.push(`categoryId=${options.categoryId}`);
